@@ -1,0 +1,11 @@
+{
+  "id": "postodo",
+  "name": "Postodo",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Sticky notes on canvas with file synchronization",
+  "author": "Postodo Team",
+  "authorUrl": "https://github.com/postodo/postodo",
+  "isDesktopOnly": false,
+  "main": "main.js"
+}

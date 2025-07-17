@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>付箋 Todo アプリ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/7.4.47/css/materialdesignicons.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Kalam', cursive;
+            background: white;
+            overflow: hidden;
+            position: relative;
+            height: 100vh;
+            background-image: 
+                radial-gradient(circle, #ddd 1px, transparent 1px),
+                linear-gradient(90deg, #f0f0f0 1px, transparent 1px),
+                linear-gradient(180deg, #f0f0f0 1px, transparent 1px);
+            background-size: 20px 20px, 40px 40px, 40px 40px;
+            user-select: none;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .header-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .menu-button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .menu-button:hover {
+            background: #1976D2;
+        }
+
+        .menu-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 200px;
+            z-index: 1001;
+            display: none;
+            margin-top: 5px;
+        }
+
+        .menu-dropdown.show {
+            display: block;
+        }
+
+        .menu-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f5;
+        }
+
+        .menu-item:first-child {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .menu-item:last-child {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+
+        .menu-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .save-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+        }
+
+        .workspace {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 80px;
+            overflow: hidden;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            z-index: 1000;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .picker-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .picker {
+            position: relative;
+        }
+
+        .picker-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s;
+        }
+
+        .picker-btn:hover {
+            border-color: #999;
+        }
+
+        .dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 8px;
+            display: none;
+            z-index: 1001;
+            min-width: 120px;
+        }
+
+        .dropdown.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f5f5;
+        }
+
+        .size-indicator {
+            width: 16px;
+            height: 16px;
+            background: #ddd;
+            border-radius: 2px;
+        }
+
+        .size-indicator.small { width: 12px; height: 12px; }
+        .size-indicator.medium { width: 16px; height: 16px; }
+        .size-indicator.large { width: 20px; height: 20px; }
+
+        .color-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+        }
+
+        .todo-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Kalam', cursive;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .todo-input:focus {
+            border-color: #2196F3;
+        }
+
+        .add-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .add-btn:hover {
+            background: #1976D2;
+        }
+
+        .sticky-note {
+            position: absolute;
+            width: 200px;
+            height: 180px;
+            background: #ffeb3b;
+            border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: move;
+            transform: rotate(-1deg);
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 1;
+        }
+
+        .sticky-note.small {
+            width: 150px;
+            height: 150px;
+        }
+
+        .sticky-note.medium {
+            width: 200px;
+            height: 180px;
+        }
+
+        .sticky-note.large {
+            width: 250px;
+            height: 220px;
+        }
+
+        .sticky-note.yellow { background: #ffeb3b; }
+        .sticky-note.pink { background: #f8bbd9; }
+        .sticky-note.blue { background: #90caf9; }
+        .sticky-note.green { background: #a5d6a7; }
+        .sticky-note.orange { background: #ffcc80; }
+        .sticky-note.purple { background: #ce93d8; }
+
+        .sticky-note:hover {
+            transform: rotate(0deg) scale(1.02);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .sticky-note.dragging {
+            transform: rotate(0deg) scale(1.1);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+            z-index: 1000;
+        }
+
+        .sticky-note.focused {
+            border: 2px solid #2196F3;
+            box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.3);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .note-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 2px;
+            border-radius: 3px;
+            transition: background 0.2s;
+        }
+
+        .note-btn:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        .note-content {
+            padding: 8px;
+            height: calc(100% - 40px);
+            resize: none;
+            border: none;
+            background: transparent;
+            font-family: 'Kalam', cursive;
+            font-size: 14px;
+            width: 100%;
+            outline: none;
+        }
+
+        .note-date {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            font-size: 10px;
+            color: rgba(0,0,0,0.5);
+        }
+
+        .color-picker {
+            position: absolute;
+            top: 30px;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+            display: none;
+            z-index: 1001;
+        }
+
+        .color-picker.show {
+            display: block;
+        }
+
+        .color-option {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin: 2px;
+            display: inline-block;
+            border: 2px solid transparent;
+            transition: border-color 0.2s;
+        }
+
+        .color-option:hover {
+            border-color: #333;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1976D2;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .help-content {
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .help-section {
+            margin-bottom: 20px;
+        }
+
+        .help-section h3 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+            background: #ccc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .switch.on {
+            background: #2196F3;
+        }
+
+        .switch-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.2s;
+        }
+
+        .switch.on .switch-thumb {
+            transform: translateX(26px);
+        }
+
+        @media (max-width: 768px) {
+            .input-container {
+                flex-direction: column;
+            }
+            
+            .picker-group {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .header-menu {
+                gap: 5px;
+            }
+            
+            .menu-button {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            .menu-dropdown {
+                right: 0;
+                min-width: 180px;
+            }
+        }
+
+        @keyframes deleteAnimation {
+            0% {
+                transform: rotate(-1deg) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: rotate(-180deg) scale(0.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: rotate(-360deg) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* アニメーション1: 720度回転落下 */
+        @keyframes spinFallAnimation {
+            0% {
+                transform: rotate(var(--initial-rotation, -1deg)) translateY(0);
+                opacity: 1;
+            }
+            20% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 144deg)) translateY(100px);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 720deg)) translateY(calc(100vh + 300px));
+                opacity: 0;
+            }
+        }
+
+        /* アニメーション2: 普通に落下 */
+        @keyframes normalFallAnimation {
+            0% {
+                transform: rotate(var(--initial-rotation, -1deg)) translateY(0) translateX(0);
+                opacity: 1;
+            }
+            10% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 5deg)) translateY(50px) translateX(10px);
+                opacity: 1;
+            }
+            30% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) - 3deg)) translateY(200px) translateX(-5px);
+                opacity: 0.9;
+            }
+            60% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 8deg)) translateY(500px) translateX(15px);
+                opacity: 0.6;
+            }
+            100% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 15deg)) translateY(calc(100vh + 200px)) translateX(25px);
+                opacity: 0;
+            }
+        }
+
+        /* アニメーション3: フェードアウト */
+        @keyframes fadeOutAnimation {
+            0% {
+                transform: rotate(var(--initial-rotation, -1deg)) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: rotate(var(--initial-rotation, -1deg)) scale(0.8);
+                opacity: 0.5;
+            }
+            100% {
+                transform: rotate(var(--initial-rotation, -1deg)) scale(0.6);
+                opacity: 0;
+            }
+        }
+
+        /* アニメーション4: ゴミ箱に吸い込まれる */
+        @keyframes trashSuckAnimation {
+            0% {
+                transform: rotate(var(--initial-rotation, -1deg)) scale(1) translate(0, 0);
+                opacity: 1;
+            }
+            50% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 90deg)) scale(0.7) translate(calc(var(--trash-x, 0px) * 0.5), calc(var(--trash-y, 0px) * 0.5));
+                opacity: 0.8;
+            }
+            90% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 270deg)) scale(0.2) translate(var(--trash-x, 0px), var(--trash-y, 0px));
+                opacity: 0.3;
+            }
+            100% {
+                transform: rotate(calc(var(--initial-rotation, -1deg) + 360deg)) scale(0) translate(var(--trash-x, 0px), var(--trash-y, 0px));
+                opacity: 0;
+            }
+        }
+
+        /* アニメーション5: 足が生えて逃げる */
+        @keyframes walkAwayAnimation {
+            0% {
+                transform: rotate(var(--initial-rotation, -1deg)) translateX(0);
+                opacity: 1;
+            }
+            20% {
+                transform: rotate(0deg) translateX(var(--walk-direction, 50px));
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(0deg) translateX(calc(var(--walk-direction, 50px) * 8));
+                opacity: 0;
+            }
+        }
+
+        /* ゴミ箱 */
+        .trash-can {
+            position: fixed;
+            bottom: 50%;
+            right: 20px;
+            transform: translateY(50%);
+            width: 80px;
+            height: 80px;
+            background: #666;
+            border-radius: 8px 8px 16px 16px;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            border: 3px solid #444;
+        }
+
+        .trash-can::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -8px;
+            right: -8px;
+            height: 10px;
+            background: #666;
+            border-radius: 6px;
+            border: 3px solid #444;
+        }
+
+        .trash-can::after {
+            content: '';
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 6px;
+            background: #666;
+            border-radius: 3px;
+            border: 2px solid #444;
+        }
+
+        .trash-can.show {
+            opacity: 1;
+        }
+
+        /* 足のアニメーション */
+        .sticky-note.walking::after {
+            content: '👣';
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            opacity: 1;
+            animation: walkingFeet 0.3s infinite;
+        }
+
+        @keyframes walkingFeet {
+            0% {
+                transform: translateX(-50%) rotate(-10deg);
+            }
+            50% {
+                transform: translateX(-50%) rotate(10deg);
+            }
+            100% {
+                transform: translateX(-50%) rotate(-10deg);
+            }
+        }
+
+        .deleting {
+            animation: deleteAnimation 0.5s ease-out;
+        }
+
+        .falling {
+            z-index: 1001;
+        }
+
+        .falling.spin-fall {
+            animation: spinFallAnimation 2s ease-in forwards;
+        }
+
+        .falling.normal-fall {
+            animation: normalFallAnimation 1.5s ease-in forwards;
+        }
+
+        .falling.fade-out {
+            animation: fadeOutAnimation 1s ease-out forwards;
+        }
+
+        .falling.trash-suck {
+            animation: trashSuckAnimation 1.5s ease-in forwards;
+        }
+
+        .falling.walk-away {
+            animation: walkAwayAnimation 2s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <i class="mdi mdi-note-text"></i>
+            付箋 Todo
+        </div>
+        <div class="header-menu">
+            <div class="save-status">
+                <div class="status-indicator" id="statusIndicator"></div>
+                <span id="statusText">保存済み</span>
+                <span id="noteCount">0個の付箋</span>
+            </div>
+            <div style="position: relative;">
+                <button class="menu-button" id="menuButton">
+                    <i class="mdi mdi-menu"></i>
+                    <span>メニュー</span>
+                </button>
+                <div class="menu-dropdown" id="menuDropdown">
+                    <div class="menu-item" id="menuAddNote">
+                        <i class="mdi mdi-note-plus menu-icon"></i>
+                        <span>空の付箋追加</span>
+                    </div>
+                    <div class="menu-item" id="menuDeleteAll">
+                        <i class="mdi mdi-delete-sweep menu-icon"></i>
+                        <span>全付箋削除</span>
+                    </div>
+                    <div class="menu-item" id="menuRandomize">
+                        <i class="mdi mdi-shuffle-variant menu-icon"></i>
+                        <span>ランダム配置</span>
+                    </div>
+                    <div class="menu-item" id="menuSave">
+                        <i class="mdi mdi-content-save menu-icon"></i>
+                        <span>手動保存</span>
+                    </div>
+                    <div class="menu-item" id="menuExport">
+                        <i class="mdi mdi-export menu-icon"></i>
+                        <span>エクスポート</span>
+                    </div>
+                    <div class="menu-item" id="menuImport">
+                        <i class="mdi mdi-import menu-icon"></i>
+                        <span>インポート</span>
+                    </div>
+                    <div class="menu-item" id="menuSettings">
+                        <i class="mdi mdi-cog menu-icon"></i>
+                        <span>設定</span>
+                    </div>
+                    <div class="menu-item" id="menuHelp">
+                        <i class="mdi mdi-help-circle menu-icon"></i>
+                        <span>ヘルプ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace" id="workspace"></div>
+
+    <div class="controls">
+        <div class="input-container">
+            <div class="picker-group">
+                <div class="picker">
+                    <div class="picker-btn" id="sizePicker">
+                        <div class="size-indicator medium"></div>
+                        <span>中</span>
+                    </div>
+                    <div class="dropdown" id="sizeDropdown">
+                        <div class="dropdown-item" data-size="small">
+                            <div class="size-indicator small"></div>
+                            <span>小</span>
+                        </div>
+                        <div class="dropdown-item" data-size="medium">
+                            <div class="size-indicator medium"></div>
+                            <span>中</span>
+                        </div>
+                        <div class="dropdown-item" data-size="large">
+                            <div class="size-indicator large"></div>
+                            <span>大</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="picker">
+                    <div class="picker-btn" id="colorPicker">
+                        <div class="color-dot" style="background: #ffeb3b;"></div>
+                        <span>黄</span>
+                    </div>
+                    <div class="dropdown" id="colorDropdown">
+                        <div class="dropdown-item" data-color="yellow">
+                            <div class="color-dot" style="background: #ffeb3b;"></div>
+                            <span>黄</span>
+                        </div>
+                        <div class="dropdown-item" data-color="pink">
+                            <div class="color-dot" style="background: #f8bbd9;"></div>
+                            <span>ピンク</span>
+                        </div>
+                        <div class="dropdown-item" data-color="blue">
+                            <div class="color-dot" style="background: #90caf9;"></div>
+                            <span>青</span>
+                        </div>
+                        <div class="dropdown-item" data-color="green">
+                            <div class="color-dot" style="background: #a5d6a7;"></div>
+                            <span>緑</span>
+                        </div>
+                        <div class="dropdown-item" data-color="orange">
+                            <div class="color-dot" style="background: #ffcc80;"></div>
+                            <span>オレンジ</span>
+                        </div>
+                        <div class="dropdown-item" data-color="purple">
+                            <div class="color-dot" style="background: #ce93d8;"></div>
+                            <span>紫</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="text" class="todo-input" id="todoInput" placeholder="新しいTodoを入力..." maxlength="500">
+            <button class="add-btn" id="addBtn">+</button>
+        </div>
+    </div>
+
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3>確認</h3>
+            <p id="confirmMessage"></p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="confirmCancel">キャンセル</button>
+                <button class="btn btn-danger" id="confirmOk">実行</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="helpModal">
+        <div class="modal-content">
+            <h3>使い方ガイド</h3>
+            <div class="help-content">
+                <div class="help-section">
+                    <h4><i class="mdi mdi-note-plus"></i> 付箋の作成</h4>
+                    <p>• 下部の入力フォームにテキストを入力してEnterキーまたは+ボタンを押す</p>
+                    <p>• メニューから「空の付箋追加」を選択</p>
+                </div>
+                <div class="help-section">
+                    <h4><i class="mdi mdi-pencil"></i> 付箋の編集</h4>
+                    <p>• 付箋をドラッグして自由に移動</p>
+                    <p>• 付箋内のテキストエリアをクリックして編集</p>
+                    <p>• <i class="mdi mdi-palette"></i>ボタンで色を変更</p>
+                    <p>• <i class="mdi mdi-delete"></i>ボタンで削除</p>
+                </div>
+                <div class="help-section">
+                    <h4><i class="mdi mdi-cog"></i> 設定とカスタマイズ</h4>
+                    <p>• サイズピッカーで付箋のサイズを選択</p>
+                    <p>• カラーピッカーで新しい付箋の色を選択</p>
+                    <p>• <i class="mdi mdi-shuffle-variant"></i>ランダム配置で付箋をランダム配置</p>
+                </div>
+                <div class="help-section">
+                    <h4><i class="mdi mdi-content-save"></i> データ管理</h4>
+                    <p>• 自動保存機能でデータを常時保存</p>
+                    <p>• <i class="mdi mdi-export"></i>エクスポートでデータをファイルに保存</p>
+                    <p>• <i class="mdi mdi-import"></i>インポートでデータを読み込み</p>
+                    <p>• 設定で自動保存間隔を調整</p>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="helpClose">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="settingsModal">
+        <div class="modal-content">
+            <h3>設定</h3>
+            <div class="settings-item">
+                <span>自動保存</span>
+                <div class="switch on" id="autoSaveSwitch">
+                    <div class="switch-thumb"></div>
+                </div>
+            </div>
+            <div class="settings-item">
+                <span>保存間隔（ms）</span>
+                <input type="number" value="500" min="100" max="5000" step="100" id="saveInterval" style="width: 80px; padding: 5px;">
+            </div>
+            <div class="settings-item">
+                <span>データクリア</span>
+                <button class="btn btn-danger" id="clearData">全データ削除</button>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="settingsClose">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" class="file-input" id="fileInput" accept=".json">
+
+    <script>
+        class StickyNotesApp {
+            constructor() {
+                this.notes = [];
+                this.nextId = 1;
+                this.currentSize = 'medium';
+                this.currentColor = 'yellow';
+                this.isDragging = false;
+                this.dragOffset = { x: 0, y: 0 };
+                this.autoSave = true;
+                this.saveInterval = 500;
+                this.saveTimeout = null;
+                this.storageKey = 'stickyNotesApp';
+                
+                this.initializeElements();
+                this.bindEvents();
+                this.loadData();
+                this.updateStatus();
+            }
+
+            initializeElements() {
+                this.workspace = document.getElementById('workspace');
+                this.todoInput = document.getElementById('todoInput');
+                this.addBtn = document.getElementById('addBtn');
+                this.sizePicker = document.getElementById('sizePicker');
+                this.sizeDropdown = document.getElementById('sizeDropdown');
+                this.colorPicker = document.getElementById('colorPicker');
+                this.colorDropdown = document.getElementById('colorDropdown');
+                this.menuButton = document.getElementById('menuButton');
+                this.menuDropdown = document.getElementById('menuDropdown');
+                this.statusIndicator = document.getElementById('statusIndicator');
+                this.statusText = document.getElementById('statusText');
+                this.noteCount = document.getElementById('noteCount');
+                this.fileInput = document.getElementById('fileInput');
+            }
+
+            bindEvents() {
+                // 基本的なイベント
+                this.addBtn.addEventListener('click', () => this.addNote());
+                this.todoInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.addNote();
+                });
+
+                // ピッカーイベント
+                this.sizePicker.addEventListener('click', () => this.toggleDropdown('size'));
+                this.colorPicker.addEventListener('click', () => this.toggleDropdown('color'));
+
+                // ドロップダウンイベント
+                this.sizeDropdown.addEventListener('click', (e) => {
+                    const item = e.target.closest('.dropdown-item');
+                    if (item) {
+                        this.currentSize = item.dataset.size;
+                        this.updateSizePicker();
+                        this.hideDropdown('size');
+                    }
+                });
+
+                this.colorDropdown.addEventListener('click', (e) => {
+                    const item = e.target.closest('.dropdown-item');
+                    if (item) {
+                        this.currentColor = item.dataset.color;
+                        this.updateColorPicker();
+                        this.hideDropdown('color');
+                    }
+                });
+
+                // メニューイベント
+                this.menuButton.addEventListener('click', () => this.toggleMenu());
+                
+                // メニューアイテムイベント
+                document.getElementById('menuAddNote').addEventListener('click', () => this.addEmptyNote());
+                document.getElementById('menuDeleteAll').addEventListener('click', () => this.deleteAllNotes());
+                document.getElementById('menuRandomize').addEventListener('click', () => this.randomizeNotes());
+                document.getElementById('menuHelp').addEventListener('click', () => this.showHelp());
+                document.getElementById('menuSave').addEventListener('click', () => this.manualSave());
+                document.getElementById('menuExport').addEventListener('click', () => this.exportData());
+                document.getElementById('menuImport').addEventListener('click', () => this.importData());
+                document.getElementById('menuSettings').addEventListener('click', () => this.showSettings());
+
+                // モーダルイベント
+                document.getElementById('confirmCancel').addEventListener('click', () => this.hideModal('confirmModal'));
+                document.getElementById('confirmOk').addEventListener('click', () => this.confirmAction());
+                document.getElementById('helpClose').addEventListener('click', () => this.hideModal('helpModal'));
+                document.getElementById('settingsClose').addEventListener('click', () => this.hideModal('settingsModal'));
+
+                // 設定イベント
+                document.getElementById('autoSaveSwitch').addEventListener('click', () => this.toggleAutoSave());
+                document.getElementById('saveInterval').addEventListener('change', (e) => {
+                    this.saveInterval = parseInt(e.target.value);
+                });
+                document.getElementById('clearData').addEventListener('click', () => this.clearAllData());
+
+                // ファイル入力イベント
+                this.fileInput.addEventListener('change', (e) => this.handleFileImport(e));
+
+                // 外部クリックでドロップダウンを閉じる
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.picker')) {
+                        this.hideDropdown('size');
+                        this.hideDropdown('color');
+                    }
+                    if (!e.target.closest('.menu-button') && !e.target.closest('.menu-dropdown')) {
+                        this.hideMenu();
+                    }
+                });
+
+                // ドラッグイベント
+                document.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+                document.addEventListener('mouseup', () => this.handleMouseUp());
+            }
+
+            addNote() {
+                const text = this.todoInput.value.trim();
+                if (!text) return;
+
+                const note = this.createNote(text);
+                this.notes.push(note);
+                this.renderNote(note);
+                this.todoInput.value = '';
+                this.todoInput.focus();
+                this.autoSaveData();
+            }
+
+            addEmptyNote() {
+                const note = this.createNote('');
+                this.notes.push(note);
+                this.renderNote(note);
+                this.hideMenu();
+                // 空の付箋作成後すぐにフォーカス
+                setTimeout(() => {
+                    const noteElement = document.querySelector(`[data-id="${note.id}"] .note-content`);
+                    if (noteElement) noteElement.focus();
+                }, 100);
+                this.autoSaveData();
+            }
+
+            createNote(text) {
+                const workspace = this.workspace.getBoundingClientRect();
+                const x = Math.random() * (workspace.width - 250);
+                const y = Math.random() * (workspace.height - 220);
+                
+                return {
+                    id: this.nextId++,
+                    text: text,
+                    color: this.currentColor,
+                    size: this.currentSize,
+                    x: x,
+                    y: y,
+                    date: new Date().toLocaleString('ja-JP'),
+                    lastModified: new Date().toLocaleString('ja-JP')
+                };
+            }
+
+            renderNote(note) {
+                const noteElement = document.createElement('div');
+                noteElement.className = `sticky-note ${note.color} ${note.size}`;
+                noteElement.dataset.id = note.id;
+                noteElement.style.left = note.x + 'px';
+                noteElement.style.top = note.y + 'px';
+                noteElement.style.transform = `rotate(${Math.random() * 6 - 3}deg)`;
+
+                noteElement.innerHTML = `
+                    <div class="note-header">
+                        <span></span>
+                        <div class="note-actions">
+                            <button class="note-btn color-btn" title="色を変更"><i class="mdi mdi-palette"></i></button>
+                            <button class="note-btn delete-btn" title="削除"><i class="mdi mdi-delete"></i></button>
+                        </div>
+                    </div>
+                    <textarea class="note-content" placeholder="ここに入力...">${note.text}</textarea>
+                    <div class="note-date">${note.date}</div>
+                    <div class="color-picker">
+                        <div class="color-option" style="background: #ffeb3b;" data-color="yellow"></div>
+                        <div class="color-option" style="background: #f8bbd9;" data-color="pink"></div>
+                        <div class="color-option" style="background: #90caf9;" data-color="blue"></div>
+                        <div class="color-option" style="background: #a5d6a7;" data-color="green"></div>
+                        <div class="color-option" style="background: #ffcc80;" data-color="orange"></div>
+                        <div class="color-option" style="background: #ce93d8;" data-color="purple"></div>
+                    </div>
+                `;
+
+                this.bindNoteEvents(noteElement, note);
+                this.workspace.appendChild(noteElement);
+                this.updateStatus();
+            }
+
+            bindNoteEvents(element, note) {
+                const header = element.querySelector('.note-header');
+                const content = element.querySelector('.note-content');
+                const colorBtn = element.querySelector('.color-btn');
+                const deleteBtn = element.querySelector('.delete-btn');
+                const colorPicker = element.querySelector('.color-picker');
+
+                // ドラッグ開始
+                header.addEventListener('mousedown', (e) => this.startDrag(e, element, note));
+
+                // テキスト編集
+                content.addEventListener('input', () => {
+                    note.text = content.value;
+                    note.lastModified = new Date().toLocaleString('ja-JP');
+                    this.autoSaveData();
+                });
+
+                content.addEventListener('focus', () => {
+                    element.classList.add('focused');
+                });
+
+                content.addEventListener('blur', () => {
+                    element.classList.remove('focused');
+                });
+
+                // 色変更
+                colorBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    colorPicker.classList.toggle('show');
+                });
+
+                colorPicker.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const option = e.target.closest('.color-option');
+                    if (option) {
+                        const newColor = option.dataset.color;
+                        this.changeNoteColor(element, note, newColor);
+                        colorPicker.classList.remove('show');
+                    }
+                });
+
+                // 削除
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.deleteNote(element, note);
+                });
+
+                // 外部クリックで色選択を閉じる
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.color-picker') && !e.target.closest('.color-btn')) {
+                        colorPicker.classList.remove('show');
+                    }
+                });
+            }
+
+            startDrag(e, element, note) {
+                if (e.target.closest('.note-actions') || e.target.closest('.note-content')) return;
+
+                this.isDragging = true;
+                this.currentDragElement = element;
+                this.currentDragNote = note;
+                
+                const rect = element.getBoundingClientRect();
+                this.dragOffset.x = e.clientX - rect.left;
+                this.dragOffset.y = e.clientY - rect.top;
+                
+                element.classList.add('dragging');
+                document.body.style.cursor = 'grabbing';
+            }
+
+            handleMouseMove(e) {
+                if (!this.isDragging) return;
+
+                const workspace = this.workspace.getBoundingClientRect();
+                const element = this.currentDragElement;
+                const note = this.currentDragNote;
+                
+                let x = e.clientX - workspace.left - this.dragOffset.x;
+                let y = e.clientY - workspace.top - this.dragOffset.y;
+                
+                // 画面外制限
+                x = Math.max(0, Math.min(x, workspace.width - element.offsetWidth));
+                y = Math.max(0, Math.min(y, workspace.height - element.offsetHeight));
+                
+                element.style.left = x + 'px';
+                element.style.top = y + 'px';
+                
+                note.x = x;
+                note.y = y;
+            }
+
+            handleMouseUp() {
+                if (!this.isDragging) return;
+
+                this.isDragging = false;
+                this.currentDragElement.classList.remove('dragging');
+                document.body.style.cursor = 'default';
+                
+                this.currentDragNote.lastModified = new Date().toLocaleString('ja-JP');
+                this.autoSaveData();
+                
+                this.currentDragElement = null;
+                this.currentDragNote = null;
+            }
+
+            changeNoteColor(element, note, color) {
+                element.className = `sticky-note ${color} ${note.size}`;
+                note.color = color;
+                note.lastModified = new Date().toLocaleString('ja-JP');
+                this.autoSaveData();
+            }
+
+            deleteNote(element, note) {
+                element.classList.add('deleting');
+                setTimeout(() => {
+                    element.remove();
+                    const index = this.notes.findIndex(n => n.id === note.id);
+                    if (index > -1) this.notes.splice(index, 1);
+                    this.updateStatus();
+                    this.autoSaveData();
+                }, 500);
+            }
+
+            deleteAllNotes() {
+                if (this.notes.length === 0) {
+                    this.hideMenu();
+                    return;
+                }
+
+                this.showConfirmModal('全ての付箋を削除しますか？', () => {
+                    const noteElements = document.querySelectorAll('.sticky-note');
+                    
+                    // ランダムでアニメーションタイプを選択
+                    const animationTypes = [
+                        'spin-fall',    // 720度回転落下
+                        'normal-fall',  // 普通に落下
+                        'fade-out',     // フェードアウト
+                        'trash-suck',   // ゴミ箱に吸い込み
+                        'walk-away'     // 足が生えて逃げる
+                    ];
+                    
+                    const selectedAnimation = animationTypes[Math.floor(Math.random() * animationTypes.length)];
+                    console.log(`Selected animation: ${selectedAnimation}`);
+                    
+                    // ゴミ箱アニメーションの場合、ゴミ箱を表示
+                    if (selectedAnimation === 'trash-suck') {
+                        this.showTrashCan();
+                    }
+                    
+                    // 各付箋にアニメーションを適用
+                    noteElements.forEach((element, index) => {
+                        // 現在の回転角度を取得
+                        const currentTransform = getComputedStyle(element).transform;
+                        const currentRotation = this.getRotationFromMatrix(currentTransform);
+                        element.style.setProperty('--initial-rotation', `${currentRotation}deg`);
+                        
+                        // 歩行アニメーションの場合、方向を設定
+                        if (selectedAnimation === 'walk-away') {
+                            const walkDirection = Math.random() > 0.5 ? 1 : -1;
+                            element.style.setProperty('--walk-direction', `${walkDirection * 100}px`);
+                            element.classList.add('walking');
+                        }
+                        
+                        // ゴミ箱アニメーションの場合、ゴミ箱の位置を設定
+                        if (selectedAnimation === 'trash-suck') {
+                            const trashCan = document.querySelector('.trash-can');
+                            const trashRect = trashCan.getBoundingClientRect();
+                            const noteRect = element.getBoundingClientRect();
+                            
+                            const deltaX = trashRect.left - noteRect.left;
+                            const deltaY = trashRect.top - noteRect.top;
+                            
+                            element.style.setProperty('--trash-x', `${deltaX}px`);
+                            element.style.setProperty('--trash-y', `${deltaY}px`);
+                        }
+                        
+                        setTimeout(() => {
+                            element.classList.add('falling', selectedAnimation);
+                            
+                            // アニメーション時間を設定
+                            const animationDuration = {
+                                'spin-fall': 2000,
+                                'normal-fall': 1500,
+                                'fade-out': 1000,
+                                'trash-suck': 1500,
+                                'walk-away': 2000
+                            };
+                            
+                            // アニメーション完了後に要素を削除
+                            setTimeout(() => {
+                                if (element.parentNode) {
+                                    element.remove();
+                                }
+                            }, animationDuration[selectedAnimation]);
+                        }, index * 100); // 100msずつ遅延
+                    });
+                    
+                    // ゴミ箱を隠す
+                    if (selectedAnimation === 'trash-suck') {
+                        setTimeout(() => {
+                            this.hideTrashCan();
+                        }, 3000);
+                    }
+                    
+                    // データを即座にクリア
+                    this.notes = [];
+                    
+                    // UI更新
+                    setTimeout(() => {
+                        this.updateStatus();
+                        this.autoSaveData();
+                    }, 200);
+                });
+                this.hideMenu();
+            }
+
+            showTrashCan() {
+                let trashCan = document.querySelector('.trash-can');
+                if (!trashCan) {
+                    trashCan = document.createElement('div');
+                    trashCan.className = 'trash-can';
+                    document.body.appendChild(trashCan);
+                }
+                
+                // 少し遅延してから表示
+                setTimeout(() => {
+                    trashCan.classList.add('show');
+                }, 100);
+            }
+
+            hideTrashCan() {
+                const trashCan = document.querySelector('.trash-can');
+                if (trashCan) {
+                    trashCan.classList.remove('show');
+                    setTimeout(() => {
+                        if (trashCan.parentNode) {
+                            trashCan.remove();
+                        }
+                    }, 300);
+                }
+            }
+
+            // Transform行列から回転角度を抽出するヘルパー関数
+            getRotationFromMatrix(transform) {
+                if (transform === 'none') return 0;
+                
+                const values = transform.split('(')[1].split(')')[0].split(',');
+                const a = values[0];
+                const b = values[1];
+                const angle = Math.round(Math.atan2(b, a) * (180/Math.PI));
+                return angle;
+            }
+
+            randomizeNotes() {
+                if (this.notes.length === 0) {
+                    this.hideMenu();
+                    return;
+                }
+
+                const workspace = this.workspace.getBoundingClientRect();
+                
+                this.notes.forEach(note => {
+                    const element = document.querySelector(`[data-id="${note.id}"]`);
+                    if (element) {
+                        const x = Math.random() * (workspace.width - element.offsetWidth);
+                        const y = Math.random() * (workspace.height - element.offsetHeight);
+                        
+                        element.style.transition = 'all 0.5s ease';
+                        element.style.left = x + 'px';
+                        element.style.top = y + 'px';
+                        element.style.transform = `rotate(${Math.random() * 6 - 3}deg)`;
+                        
+                        note.x = x;
+                        note.y = y;
+                        note.lastModified = new Date().toLocaleString('ja-JP');
+                        
+                        setTimeout(() => {
+                            element.style.transition = '';
+                        }, 500);
+                    }
+                });
+                
+                this.hideMenu();
+                this.autoSaveData();
+            }
+
+            toggleDropdown(type) {
+                const dropdown = document.getElementById(`${type}Dropdown`);
+                dropdown.classList.toggle('show');
+            }
+
+            hideDropdown(type) {
+                const dropdown = document.getElementById(`${type}Dropdown`);
+                dropdown.classList.remove('show');
+            }
+
+            updateSizePicker() {
+                const sizeNames = { small: '小', medium: '中', large: '大' };
+                this.sizePicker.innerHTML = `
+                    <div class="size-indicator ${this.currentSize}"></div>
+                    <span>${sizeNames[this.currentSize]}</span>
+                `;
+            }
+
+            updateColorPicker() {
+                const colorNames = { 
+                    yellow: '黄', pink: 'ピンク', blue: '青', 
+                    green: '緑', orange: 'オレンジ', purple: '紫' 
+                };
+                const colorValues = {
+                    yellow: '#ffeb3b', pink: '#f8bbd9', blue: '#90caf9',
+                    green: '#a5d6a7', orange: '#ffcc80', purple: '#ce93d8'
+                };
+                
+                this.colorPicker.innerHTML = `
+                    <div class="color-dot" style="background: ${colorValues[this.currentColor]};"></div>
+                    <span>${colorNames[this.currentColor]}</span>
+                `;
+            }
+
+            toggleMenu() {
+                this.menuDropdown.classList.toggle('show');
+            }
+
+            hideMenu() {
+                this.menuDropdown.classList.remove('show');
+            }
+
+            showHelp() {
+                this.showModal('helpModal');
+                this.hideMenu();
+            }
+
+            showSettings() {
+                this.showModal('settingsModal');
+                this.hideMenu();
+            }
+
+            manualSave() {
+                this.saveData();
+                this.updateStatus('saved');
+                this.hideMenu();
+            }
+
+            exportData() {
+                const data = {
+                    notes: this.notes,
+                    settings: {
+                        globalSize: this.currentSize,
+                        globalColor: this.currentColor,
+                        autoSave: this.autoSave,
+                        saveInterval: this.saveInterval,
+                        lastSaveTime: new Date().toLocaleString('ja-JP')
+                    }
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `sticky-notes-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                this.hideMenu();
+            }
+
+            showConfirmModal(message, onConfirm) {
+                document.getElementById('confirmMessage').textContent = message;
+                this.showModal('confirmModal');
+                this.confirmCallback = onConfirm;
+            }
+
+            confirmAction() {
+                if (this.confirmCallback) {
+                    this.confirmCallback();
+                    this.confirmCallback = null;
+                }
+                this.hideModal('confirmModal');
+            }
+
+            showModal(modalId) {
+                document.getElementById(modalId).classList.add('show');
+            }
+
+            hideModal(modalId) {
+                document.getElementById(modalId).classList.remove('show');
+            }
+
+            toggleAutoSave() {
+                this.autoSave = !this.autoSave;
+                const switchElement = document.getElementById('autoSaveSwitch');
+                switchElement.classList.toggle('on', this.autoSave);
+                this.saveData(); // 設定を保存
+            }
+
+            clearAllData() {
+                this.showConfirmModal('全てのデータを削除しますか？この操作は取り消せません。', () => {
+                    const noteElements = document.querySelectorAll('.sticky-note');
+                    noteElements.forEach(element => element.remove());
+                    this.notes = [];
+                    this.nextId = 1;
+                    
+                    // localStorageからも削除
+                    try {
+                        if (typeof(Storage) !== "undefined" && localStorage) {
+                            localStorage.removeItem(this.storageKey);
+                        }
+                        if (this.savedData) {
+                            delete this.savedData;
+                        }
+                    } catch (error) {
+                        console.error('Clear storage error:', error);
+                    }
+                    
+                    this.updateStatus();
+                    this.hideModal('settingsModal');
+                });
+            }
+
+            autoSaveData() {
+                if (!this.autoSave) return;
+
+                if (this.saveTimeout) {
+                    clearTimeout(this.saveTimeout);
+                }
+
+                this.updateStatus('saving');
+                
+                this.saveTimeout = setTimeout(() => {
+                    this.saveData();
+                    this.updateStatus('saved');
+                }, this.saveInterval);
+            }
+
+            saveData() {
+                const data = {
+                    notes: this.notes,
+                    settings: {
+                        globalSize: this.currentSize,
+                        globalColor: this.currentColor,
+                        autoSave: this.autoSave,
+                        saveInterval: this.saveInterval,
+                        nextId: this.nextId,
+                        lastSaveTime: new Date().toLocaleString('ja-JP')
+                    }
+                };
+
+                try {
+                    if (typeof(Storage) !== "undefined" && localStorage) {
+                        localStorage.setItem(this.storageKey, JSON.stringify(data));
+                        console.log('Data saved to localStorage');
+                    } else {
+                        // localStorage が使用できない場合（Claude.ai環境など）
+                        this.savedData = data;
+                        console.log('Data saved to memory (localStorage not available)');
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    this.updateStatus('error');
+                    // フォールバック: メモリ内保存
+                    this.savedData = data;
+                }
+            }
+
+            loadData() {
+                try {
+                    if (typeof(Storage) !== "undefined" && localStorage) {
+                        const savedData = localStorage.getItem(this.storageKey);
+                        if (savedData) {
+                            const data = JSON.parse(savedData);
+                            this.restoreFromData(data);
+                            console.log('Data loaded from localStorage');
+                            return;
+                        }
+                    }
+                    
+                    // localStorage が使用できない場合、メモリから読み込み
+                    if (this.savedData) {
+                        this.restoreFromData(this.savedData);
+                        console.log('Data loaded from memory');
+                    }
+                } catch (error) {
+                    console.error('Load error:', error);
+                    this.updateStatus('error');
+                }
+            }
+
+            restoreFromData(data) {
+                if (data.notes && Array.isArray(data.notes)) {
+                    this.notes = data.notes;
+                    this.notes.forEach(note => {
+                        this.renderNote(note);
+                    });
+                }
+
+                if (data.settings) {
+                    this.currentSize = data.settings.globalSize || 'medium';
+                    this.currentColor = data.settings.globalColor || 'yellow';
+                    this.autoSave = data.settings.autoSave !== false;
+                    this.saveInterval = data.settings.saveInterval || 500;
+                    this.nextId = data.settings.nextId || Math.max(...this.notes.map(n => n.id), 0) + 1;
+
+                    // UI要素を更新
+                    this.updateSizePicker();
+                    this.updateColorPicker();
+                    
+                    const autoSaveSwitch = document.getElementById('autoSaveSwitch');
+                    const saveIntervalInput = document.getElementById('saveInterval');
+                    if (autoSaveSwitch) autoSaveSwitch.classList.toggle('on', this.autoSave);
+                    if (saveIntervalInput) saveIntervalInput.value = this.saveInterval;
+                }
+
+                this.updateStatus('loaded');
+            }
+
+            clearAllData() {
+                this.showConfirmModal('全てのデータを削除しますか？この操作は取り消せません。', () => {
+                    const noteElements = document.querySelectorAll('.sticky-note');
+                    noteElements.forEach(element => element.remove());
+                    this.notes = [];
+                    this.nextId = 1;
+                    
+                    // localStorageからも削除
+                    try {
+                        if (typeof(Storage) !== "undefined" && localStorage) {
+                            localStorage.removeItem(this.storageKey);
+                        }
+                        if (this.savedData) {
+                            delete this.savedData;
+                        }
+                    } catch (error) {
+                        console.error('Clear storage error:', error);
+                    }
+                    
+                    this.updateStatus();
+                    this.hideModal('settingsModal');
+                });
+            }
+
+            handleFileImport(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        if (data.notes && Array.isArray(data.notes)) {
+                            // 既存の付箋を削除
+                            document.querySelectorAll('.sticky-note').forEach(el => el.remove());
+                            
+                            // 新しいデータを復元
+                            this.restoreFromData(data);
+                            
+                            // インポート後にlocalStorageに保存
+                            this.saveData();
+                            this.updateStatus('imported');
+                        } else {
+                            throw new Error('無効なファイル形式です');
+                        }
+                    } catch (error) {
+                        alert('ファイルの読み込みに失敗しました: ' + error.message);
+                        this.updateStatus('error');
+                    }
+                };
+                
+                reader.readAsText(file);
+                event.target.value = '';
+            }
+
+            updateStatus(status = 'saved') {
+                const statusTexts = {
+                    saved: '保存済み',
+                    saving: '保存中...',
+                    loaded: '読み込み完了',
+                    imported: 'インポート完了',
+                    error: '保存エラー'
+                };
+                
+                const statusColors = {
+                    saved: '#4CAF50',
+                    saving: '#FF9800',
+                    loaded: '#2196F3',
+                    imported: '#2196F3',
+                    error: '#f44336'
+                };
+                
+                this.statusText.textContent = statusTexts[status];
+                this.statusIndicator.style.background = statusColors[status];
+                this.noteCount.textContent = `${this.notes.length}個の付箋`;
+            }
+        }
+
+        // アプリケーション初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            new StickyNotesApp();
+        });
+    </script>
+</body>
+</html>

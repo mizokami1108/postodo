@@ -1,0 +1,201 @@
+/* Postodo Plugin Styles */
+
+/* コントロールパネル */
+.postodo-controls {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+    background: var(--background-secondary);
+    border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.postodo-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid var(--background-modifier-border);
+    border-radius: 4px;
+    background: var(--background-primary);
+    color: var(--text-normal);
+    font-size: 14px;
+}
+
+.postodo-add-btn,
+.postodo-clear-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.postodo-add-btn {
+    background: var(--interactive-accent);
+    color: var(--text-on-accent);
+}
+
+.postodo-add-btn:hover {
+    background: var(--interactive-accent-hover);
+}
+
+.postodo-clear-btn {
+    background: var(--interactive-normal);
+    color: var(--text-normal);
+}
+
+.postodo-clear-btn:hover {
+    background: var(--interactive-hover);
+}
+
+/* キャンバス */
+.postodo-canvas {
+    position: relative;
+    flex: 1;
+    background: var(--background-primary);
+    overflow: hidden;
+    min-height: 400px;
+}
+
+/* 付箋 */
+.sticky-note {
+    position: absolute;
+    cursor: grab;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+    padding: 12px;
+    font-family: 'Kalam', cursive, var(--font-text);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.sticky-note:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sticky-note.dragging {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1000 !important;
+}
+
+.note-content {
+    width: 100%;
+    height: calc(100% - 24px);
+    word-wrap: break-word;
+    overflow-y: auto;
+    line-height: 1.4;
+    color: #333;
+    font-size: 14px;
+}
+
+.note-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.note-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.note-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.note-delete-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: rgba(255, 0, 0, 0.7);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.sticky-note:hover .note-delete-btn {
+    opacity: 1;
+}
+
+.note-delete-btn:hover {
+    background: rgba(255, 0, 0, 0.9);
+    transform: scale(1.1);
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+    .postodo-controls {
+        flex-direction: column;
+    }
+    
+    .postodo-input {
+        margin-bottom: 8px;
+    }
+    
+    .sticky-note {
+        min-width: 140px;
+        min-height: 140px;
+    }
+}
+
+/* ダークモード対応 */
+.theme-dark .sticky-note {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark .note-content {
+    color: #333;
+}
+
+.theme-dark .note-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* アニメーション */
+@keyframes noteAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.sticky-note {
+    animation: noteAppear 0.3s ease-out;
+}
+
+/* カラーバリエーション */
+.sticky-note[data-color="yellow"] {
+    background: #ffeb3b;
+}
+
+.sticky-note[data-color="pink"] {
+    background: #f8bbd9;
+}
+
+.sticky-note[data-color="blue"] {
+    background: #90caf9;
+}
+
+.sticky-note[data-color="green"] {
+    background: #a5d6a7;
+}
+
+.sticky-note[data-color="orange"] {
+    background: #ffcc80;
+}
+
+.sticky-note[data-color="purple"] {
+    background: #ce93d8;
+}
