@@ -1,15 +1,18 @@
 import { DeepPartial, PostodoConfig, ConfigWatcher, ExtensionConfig } from '../types/config-types';
 import { DEFAULT_SETTINGS } from '../types/config-types';
+import { IEventBus } from '../core/event-bus';
 
 export class ConfigProvider {
     private config: DeepPartial<PostodoConfig>;
     private watchers = new Map<string, ConfigWatcher[]>();
+    private eventBus?: IEventBus;
 
-    constructor(initialConfig?: DeepPartial<PostodoConfig>) {
+    constructor(initialConfig?: DeepPartial<PostodoConfig>, eventBus?: IEventBus) {
         this.config = this.mergeConfigs([
             DEFAULT_SETTINGS,
             initialConfig || {}
         ]);
+        this.eventBus = eventBus;
     }
 
     get<T>(path: string): T {
@@ -19,6 +22,11 @@ export class ConfigProvider {
     set<T>(path: string, value: T): void {
         this.setValueByPath(this.config, path, value);
         this.notifyWatchers(path, value);
+        
+        // イベントバスにも通知
+        if (this.eventBus) {
+            this.eventBus.emit('config-changed', { path, value });
+        }
     }
 
     watch(path: string, callback: ConfigWatcher): () => void {
@@ -47,8 +55,12 @@ export class ConfigProvider {
     }
 
     updateFromSettings(settings: any): void {
+        const oldConfig = { ...this.config };
         this.config = this.mergeConfigs([this.config, settings]);
         this.notifyAllWatchers();
+        
+        // 変更された設定パスを検出してイベントを発行
+        this.emitConfigChanges(oldConfig, this.config);
     }
 
     private getValueByPath(obj: any, path: string): any {
@@ -132,5 +144,26 @@ export class ConfigProvider {
         }
 
         return result;
+    }
+
+    private emitConfigChanges(oldConfig: any, newConfig: any): void {
+        if (!this.eventBus) return;
+        
+        // 重要な設定項目の変更を検出
+        const importantPaths = [
+            'core.maxNotes',
+            'core.saveInterval',
+            'rendering.maxRenderedNotes',
+            'postodoFolder'
+        ];
+        
+        importantPaths.forEach(path => {
+            const oldValue = this.getValueByPath(oldConfig, path);
+            const newValue = this.getValueByPath(newConfig, path);
+            
+            if (oldValue !== newValue) {
+                this.eventBus!.emit('config-changed', { path, value: newValue });
+            }
+        });
     }
 }

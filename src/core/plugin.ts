@@ -1,4 +1,4 @@
-import { App, Plugin, WorkspaceLeaf } from 'obsidian';
+import { App, Plugin, WorkspaceLeaf, Notice } from 'obsidian';
 import { DIContainer } from './container';
 import { EventBus, IEventBus } from './event-bus';
 import { ConfigProvider } from '../providers/config-provider';
@@ -9,11 +9,13 @@ import { PostodoView } from '../ui/postodo-view';
 import { PostodoSettingsTab } from '../settings/postodo-settings-tab';
 import { PostodoSettings, DEFAULT_SETTINGS } from '../types/config-types';
 import { SERVICE_TOKENS } from '../types/core-types';
+import { ErrorHandler } from '../utils/error-handler';
 
 export class PostodoPlugin {
     private container!: DIContainer;
     private settings!: PostodoSettings;
     private configProvider!: ConfigProvider;
+    private errorHandler!: ErrorHandler;
 
     constructor(
         private app: App,
@@ -67,12 +69,20 @@ export class PostodoPlugin {
     private initializeDIContainer(): void {
         this.container = new DIContainer();
 
-        // 設定プロバイダーの初期化
-        this.configProvider = new ConfigProvider(this.settings);
-
         // コアサービスの登録
         this.container.register(SERVICE_TOKENS.EVENT_BUS, EventBus, { singleton: true });
+        
+        // イベントバスを取得して設定プロバイダーに渡す
+        const eventBus = this.container.resolve<IEventBus>(SERVICE_TOKENS.EVENT_BUS);
+        this.configProvider = new ConfigProvider(this.settings, eventBus);
+        
         this.container.register(SERVICE_TOKENS.CONFIG, ConfigProvider, { singleton: true });
+
+        // エラーハンドラーの初期化
+        this.errorHandler = ErrorHandler.getInstance(eventBus);
+        
+        // エラーハンドラーのグローバル設定
+        this.setupGlobalErrorHandling();
 
         // ストレージサービスの登録
         this.container.registerFactory(SERVICE_TOKENS.STORAGE_ADAPTER, () => {
@@ -157,27 +167,51 @@ export class PostodoPlugin {
     }
 
     private async createQuickNote(): Promise<void> {
-        const dataManager = this.container.resolve<DataManager>(SERVICE_TOKENS.DATA_MANAGER);
-        
-        const result = await dataManager.createNote({
-            content: 'New note',
-            position: { x: Math.random() * 400, y: Math.random() * 300, zIndex: 1 }
-        });
-        
-        if (result.success) {
-            // ビューを開いて新しい付箋を表示
-            await this.activateView();
+        try {
+            const dataManager = this.container.resolve<DataManager>(SERVICE_TOKENS.DATA_MANAGER);
+            
+            const result = await dataManager.createNote({
+                content: 'New note',
+                position: { x: Math.random() * 400, y: Math.random() * 300, zIndex: 1 }
+            });
+            
+            if (result.success) {
+                // ビューを開いて新しい付箋を表示
+                await this.activateView();
+            } else {
+                this.errorHandler.handleError(result.error!, {
+                    component: 'PostodoPlugin',
+                    action: 'createQuickNote'
+                });
+            }
+        } catch (error) {
+            this.errorHandler.handleError(error as Error, {
+                component: 'PostodoPlugin',
+                action: 'createQuickNote'
+            });
         }
     }
 
     private async showAllNotes(): Promise<void> {
-        const dataManager = this.container.resolve<DataManager>(SERVICE_TOKENS.DATA_MANAGER);
-        const result = await dataManager.getAllNotes();
-        
-        if (result.success) {
-            console.log('All notes:', result.data);
-            // ビューを開いて全ての付箋を表示
-            await this.activateView();
+        try {
+            const dataManager = this.container.resolve<DataManager>(SERVICE_TOKENS.DATA_MANAGER);
+            const result = await dataManager.getAllNotes();
+            
+            if (result.success) {
+                console.log('All notes:', result.data);
+                // ビューを開いて全ての付箋を表示
+                await this.activateView();
+            } else {
+                this.errorHandler.handleError(result.error!, {
+                    component: 'PostodoPlugin',
+                    action: 'showAllNotes'
+                });
+            }
+        } catch (error) {
+            this.errorHandler.handleError(error as Error, {
+                component: 'PostodoPlugin',
+                action: 'showAllNotes'
+            });
         }
     }
 
@@ -188,5 +222,23 @@ export class PostodoPlugin {
 
     getContainer(): DIContainer {
         return this.container;
+    }
+
+    private setupGlobalErrorHandling(): void {
+        // グローバルエラーハンドラーの設定
+        this.errorHandler.onError((errorDetails) => {
+            // 重要なエラーは通知として表示
+            if (errorDetails.severity === 'high' || errorDetails.severity === 'critical') {
+                new Notice(errorDetails.userMessage, 5000);
+            }
+        });
+
+        // 未処理のPromiseエラーをキャッチ
+        window.addEventListener('unhandledrejection', (event) => {
+            this.errorHandler.handleError(event.reason, {
+                component: 'Global',
+                action: 'unhandledRejection'
+            });
+        });
     }
 }
