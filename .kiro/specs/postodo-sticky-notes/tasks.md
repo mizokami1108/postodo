@@ -80,26 +80,26 @@
     - 編集完了時のファイル名変更トリガー
     - _Requirements: 2.5, 2.6_
 
-- [ ] 6. 競合解決システムの強化
-  - [ ] 6.1 ConflictResolver インターフェースの作成
+- [x] 6. 競合解決システムの強化
+  - [x] 6.1 ConflictResolver インターフェースの作成
     - `src/interfaces/sync/i-conflict-resolver.ts` を作成
     - _Requirements: 8.1, 8.2, 8.3_
-  - [ ] 6.2 ConflictResolver 実装の作成
+  - [x] 6.2 ConflictResolver 実装の作成
     - `src/implementations/sync/conflict-resolver.ts` を作成
     - 位置競合: UI 優先
     - コンテンツ競合: 新しい方優先
     - メタデータ競合: マージ
     - _Requirements: 8.1, 8.2, 8.3_
-  - [ ] 6.3 SyncManager への ConflictResolver 統合
+  - [x] 6.3 SyncManager への ConflictResolver 統合
     - 競合検出と解決フローの実装
     - _Requirements: 7.3_
-  - [ ] 6.4 プロパティテスト: 位置競合解決
+  - [x] 6.4 プロパティテスト: 位置競合解決
     - **Property 11: 位置競合時のUI優先**
     - **Validates: Requirements 8.1**
-  - [ ] 6.5 プロパティテスト: コンテンツ競合解決
+  - [x] 6.5 プロパティテスト: コンテンツ競合解決
     - **Property 12: コンテンツ競合時の新しい方優先**
     - **Validates: Requirements 8.2**
-  - [ ] 6.6 プロパティテスト: メタデータマージ
+  - [x] 6.6 プロパティテスト: メタデータマージ
     - **Property 13: メタデータ競合時のマージ**
     - **Validates: Requirements 8.3**
 
