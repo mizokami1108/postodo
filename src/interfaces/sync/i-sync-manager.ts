@@ -6,6 +6,19 @@ import { StickyNote, Result } from '../../types/core-types';
 export type SyncStatus = 'idle' | 'syncing' | 'saved' | 'error';
 
 /**
+ * リトライ設定
+ * Requirements: 7.4
+ */
+export interface RetryConfig {
+    /** 最大リトライ回数 */
+    maxRetries: number;
+    /** 初期遅延時間（ミリ秒） */
+    initialDelayMs: number;
+    /** バックオフ倍率 */
+    backoffMultiplier: number;
+}
+
+/**
  * 同期結果
  */
 export interface SyncResult {
@@ -23,7 +36,7 @@ export interface SyncResult {
  * 同期マネージャーインターフェース
  * UIとファイル間のデータ同期を管理する
  * 
- * Requirements: 7.1, 7.2, 7.3
+ * Requirements: 7.1, 7.2, 7.3, 7.4
  */
 export interface ISyncManager {
     /**
@@ -37,11 +50,19 @@ export interface ISyncManager {
     stopWatching(): void;
 
     /**
-     * 付箋をファイルに同期する
+     * 付箋をファイルに同期する（デバウンス付き）
      * @param note 同期する付箋
      * @returns 同期結果
      */
     syncNoteToFile(note: StickyNote): Promise<Result<void>>;
+
+    /**
+     * 付箋をファイルに即座に同期する（デバウンスなし、リトライ機能付き）
+     * Requirements: 7.4
+     * @param note 同期する付箋
+     * @returns 同期結果
+     */
+    syncNoteToFileImmediate(note: StickyNote): Promise<Result<void>>;
 
     /**
      * ファイルから付箋を同期する
@@ -82,6 +103,13 @@ export interface ISyncManager {
      * @returns 同期ステータス
      */
     getStatus(): SyncStatus;
+
+    /**
+     * リトライ設定を取得する
+     * Requirements: 7.4
+     * @returns リトライ設定
+     */
+    getRetryConfig(): RetryConfig;
 
     /**
      * リソースをクリーンアップする
