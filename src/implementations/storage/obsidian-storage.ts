@@ -145,6 +145,55 @@ export class ObsidianStorageAdapter implements IStorageAdapter {
         }, 'createFolder', folderPath);
     }
 
+    async rename(oldPath: string, newPath: string): Promise<Result<void>> {
+        // ファイルパスのバリデーション
+        const oldPathValidation = FileValidator.validateFilePath(oldPath);
+        if (!oldPathValidation.valid) {
+            return { 
+                success: false, 
+                error: new FileOperationError(oldPathValidation.error!, oldPath, 'rename')
+            };
+        }
+
+        const newPathValidation = FileValidator.validateFilePath(newPath);
+        if (!newPathValidation.valid) {
+            return { 
+                success: false, 
+                error: new FileOperationError(newPathValidation.error!, newPath, 'rename')
+            };
+        }
+
+        // 同じファイルへの同時操作を防ぐためのキューイング
+        if (this.operationQueue.has(oldPath)) {
+            await this.operationQueue.get(oldPath);
+        }
+
+        const operation = this.withRetry(async () => {
+            const file = this.vault.getAbstractFileByPath(oldPath);
+            if (!file || !(file instanceof TFile)) {
+                throw new FileOperationError(`File not found: ${oldPath}`, oldPath, 'rename');
+            }
+
+            // 新しいパスに既にファイルが存在するかチェック
+            const existingFile = this.vault.getAbstractFileByPath(newPath);
+            if (existingFile) {
+                throw new FileOperationError(`File already exists: ${newPath}`, newPath, 'rename');
+            }
+            
+            await this.vault.rename(file, newPath);
+            return { success: true, data: undefined };
+        }, 'rename', oldPath);
+
+        this.operationQueue.set(oldPath, operation);
+        
+        try {
+            const result = await operation;
+            return result;
+        } finally {
+            this.operationQueue.delete(oldPath);
+        }
+    }
+
     private async withRetry<T>(
         operation: () => Promise<Result<T>>,
         operationType: string,

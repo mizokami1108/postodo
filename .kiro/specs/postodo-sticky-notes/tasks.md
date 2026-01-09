@@ -67,15 +67,15 @@
   - 全てのテストが通ることを確認
   - 質問があればユーザーに確認
 
-- [ ] 5. タイトル変更時のファイル名変更
-  - [ ] 5.1 NoteRepository.rename メソッドの実装
+- [x] 5. タイトル変更時のファイル名変更
+  - [x] 5.1 NoteRepository.rename メソッドの実装
     - タイトル変更時にファイル名を変更
     - ファイルパスの更新とキャッシュの更新
     - _Requirements: 2.5_
-  - [ ] 5.2 DataManager.renameNote メソッドの追加
+  - [x] 5.2 DataManager.renameNote メソッドの追加
     - バリデーションとイベント発火
     - _Requirements: 2.5_
-  - [ ] 5.3 PostodoView でのタイトル編集 UI
+  - [x] 5.3 PostodoView でのタイトル編集 UI
     - タイトル編集フィールドの追加
     - 編集完了時のファイル名変更トリガー
     - _Requirements: 2.5, 2.6_

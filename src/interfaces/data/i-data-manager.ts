@@ -6,6 +6,7 @@ export interface IDataManager {
     createNote(options: CreateNoteOptions): Promise<Result<StickyNote>>;
     updateNote(id: string, options: UpdateNoteOptions): Promise<Result<StickyNote>>;
     deleteNote(id: string): Promise<Result<void>>;
+    renameNote(id: string, newTitle: string): Promise<Result<StickyNote>>;
     getNote(id: string): Promise<Result<StickyNote | null>>;
     getAllNotes(): Promise<Result<StickyNote[]>>;
     getFilteredNotes(filter: IDisplayFilter): Promise<Result<StickyNote[]>>;

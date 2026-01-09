@@ -7,4 +7,5 @@ export interface INoteRepository {
     update(id: string, options: UpdateNoteOptions): Promise<Result<StickyNote>>;
     delete(id: string): Promise<Result<void>>;
     exists(id: string): Promise<Result<boolean>>;
+    rename(id: string, newTitle: string): Promise<Result<StickyNote>>;
 }

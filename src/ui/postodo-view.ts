@@ -452,6 +452,27 @@ export class PostodoView extends ItemView {
             this.createTaskHeader(noteEl, note);
         }
 
+        // タイトル（通常のノートの場合のみ）
+        let titleEl: HTMLElement | null = null;
+        if (!isTaskNote) {
+            titleEl = noteEl.createEl('div', {
+                cls: 'note-title',
+                text: note.title || ''
+            });
+            titleEl.style.fontWeight = 'bold';
+            titleEl.style.marginBottom = '4px';
+            titleEl.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
+            titleEl.style.paddingBottom = '4px';
+            titleEl.style.minHeight = '20px';
+            titleEl.style.cursor = 'text';
+            
+            // タイトルが空の場合はプレースホルダーを表示
+            if (!note.title) {
+                titleEl.style.color = 'rgba(0,0,0,0.4)';
+                titleEl.textContent = 'タイトルを入力...';
+            }
+        }
+
         // コンテンツ
         const contentEl = noteEl.createEl('div', {
             cls: isTaskNote ? 'task-content' : 'note-content'
@@ -475,7 +496,7 @@ export class PostodoView extends ItemView {
         checkboxEl.title = note.completed ? '完了済み' : '未完了';
 
         // イベントリスナー
-        this.setupNoteEventListeners(noteEl, note, contentEl, checkboxEl);
+        this.setupNoteEventListeners(noteEl, note, contentEl, checkboxEl, titleEl);
     }
 
     private createTaskHeader(noteEl: HTMLElement, note: StickyNote): void {
@@ -526,7 +547,8 @@ export class PostodoView extends ItemView {
         noteEl: HTMLElement,
         note: StickyNote,
         contentEl: HTMLElement,
-        checkboxEl: HTMLInputElement
+        checkboxEl: HTMLInputElement,
+        titleEl: HTMLElement | null = null
     ): void {
         // 既存のドラッグハンドラーをクリーンアップ
         const existingHandler = this.dragHandlers.get(note.id);
@@ -540,6 +562,20 @@ export class PostodoView extends ItemView {
             this.lastDragEndTime = timestamp;
         });
         this.dragHandlers.set(note.id, dragHandler);
+
+        // タイトル編集機能（通常のノートの場合のみ）
+        if (titleEl) {
+            titleEl.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                console.log(`[DEBUG] PostodoView: Double-click title edit triggered for note ${note.id}`);
+                const currentNote = this.notes.find(n => n.id === note.id);
+                if (!currentNote) {
+                    console.log(`[DEBUG] PostodoView: Note ${note.id} not found in local notes`);
+                    return;
+                }
+                this.editNoteTitle(currentNote, titleEl);
+            });
+        }
 
         // 編集機能
         contentEl.addEventListener('dblclick', () => {
@@ -559,6 +595,134 @@ export class PostodoView extends ItemView {
             e.preventDefault();
             e.stopPropagation();
             await this.toggleNoteCompletion(note.id);
+        });
+    }
+
+    private editNoteTitle(note: StickyNote, titleEl: HTMLElement): void {
+        console.log(`[DEBUG] PostodoView: Starting title edit for note ${note.id}, title: "${note.title}"`);
+        // 編集状態を設定
+        this.dataManager.setNoteEditing(note.id, true);
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = note.title || '';
+        input.placeholder = 'タイトルを入力...';
+        input.style.width = '100%';
+        input.style.border = 'none';
+        input.style.background = 'transparent';
+        input.style.fontWeight = 'bold';
+        input.style.outline = '2px solid #4a90d9';
+        input.style.borderRadius = '2px';
+        input.style.padding = '2px';
+        
+        titleEl.replaceWith(input);
+        input.focus();
+        input.select();
+        
+        const saveTitle = async () => {
+            const newTitle = input.value.trim();
+            console.log(`[DEBUG] PostodoView: Saving title for note ${note.id}: "${note.title}" -> "${newTitle}"`);
+            
+            // UI更新を先に実行
+            const newTitleEl = document.createElement('div');
+            newTitleEl.className = 'note-title';
+            newTitleEl.style.fontWeight = 'bold';
+            newTitleEl.style.marginBottom = '4px';
+            newTitleEl.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
+            newTitleEl.style.paddingBottom = '4px';
+            newTitleEl.style.minHeight = '20px';
+            newTitleEl.style.cursor = 'text';
+            
+            if (newTitle) {
+                newTitleEl.textContent = newTitle;
+                newTitleEl.style.color = '';
+            } else {
+                newTitleEl.textContent = 'タイトルを入力...';
+                newTitleEl.style.color = 'rgba(0,0,0,0.4)';
+            }
+            
+            input.replaceWith(newTitleEl);
+            
+            // 新しい要素にイベントリスナーを再設定
+            newTitleEl.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                this.editNoteTitle({ ...note, title: newTitle }, newTitleEl);
+            });
+            
+            // ローカル状態を先に更新
+            const noteIndex = this.notes.findIndex(n => n.id === note.id);
+            if (noteIndex !== -1) {
+                this.notes[noteIndex] = { ...this.notes[noteIndex], title: newTitle };
+            }
+            
+            // タイトルが変わった場合のみデータ保存（ファイル名変更を含む）
+            if (newTitle !== note.title) {
+                try {
+                    const result = await this.dataManager.renameNote(note.id, newTitle);
+                    if (result.success) {
+                        this.feedbackSystem?.showSuccess('タイトルを更新しました');
+                        // ローカル状態を更新（ファイルパスも更新される可能性がある）
+                        if (noteIndex !== -1) {
+                            this.notes[noteIndex] = result.data;
+                        }
+                    } else {
+                        this.handleError(result.error, 'renameNote');
+                        // 保存失敗時は元に戻す
+                        newTitleEl.textContent = note.title || 'タイトルを入力...';
+                        if (!note.title) {
+                            newTitleEl.style.color = 'rgba(0,0,0,0.4)';
+                        }
+                        if (noteIndex !== -1) {
+                            this.notes[noteIndex] = { ...this.notes[noteIndex], title: note.title };
+                        }
+                    }
+                } catch (error) {
+                    console.error('Save title error:', error);
+                    this.handleError(error as Error, 'saveTitle');
+                }
+            }
+            
+            // 最後に編集状態を解除
+            this.dataManager.setNoteEditing(note.id, false);
+        };
+        
+        const cancelTitle = () => {
+            // 編集状態を解除
+            this.dataManager.setNoteEditing(note.id, false);
+            
+            const newTitleEl = document.createElement('div');
+            newTitleEl.className = 'note-title';
+            newTitleEl.style.fontWeight = 'bold';
+            newTitleEl.style.marginBottom = '4px';
+            newTitleEl.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
+            newTitleEl.style.paddingBottom = '4px';
+            newTitleEl.style.minHeight = '20px';
+            newTitleEl.style.cursor = 'text';
+            
+            if (note.title) {
+                newTitleEl.textContent = note.title;
+            } else {
+                newTitleEl.textContent = 'タイトルを入力...';
+                newTitleEl.style.color = 'rgba(0,0,0,0.4)';
+            }
+            
+            input.replaceWith(newTitleEl);
+            
+            // 新しい要素にイベントリスナーを再設定
+            newTitleEl.addEventListener('dblclick', (e) => {
+                e.stopPropagation();
+                this.editNoteTitle(note, newTitleEl);
+            });
+        };
+        
+        input.addEventListener('blur', saveTitle);
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveTitle();
+            } else if (e.key === 'Escape') {
+                cancelTitle();
+            }
         });
     }
 
@@ -669,6 +833,20 @@ export class PostodoView extends ItemView {
         noteEl.style.top = `${note.position.y}px`;
 
         const isTaskNote = PostodoNoteDetector.isTaskNote(note);
+        
+        // タイトルの更新（通常のノートの場合のみ）
+        if (!isTaskNote) {
+            const titleEl = noteEl.querySelector('.note-title') as HTMLElement;
+            if (titleEl) {
+                if (note.title) {
+                    titleEl.textContent = note.title;
+                    titleEl.style.color = '';
+                } else {
+                    titleEl.textContent = 'タイトルを入力...';
+                    titleEl.style.color = 'rgba(0,0,0,0.4)';
+                }
+            }
+        }
         
         // コンテンツの更新
         const contentEl = noteEl.querySelector('.note-content, .task-content') as HTMLElement;

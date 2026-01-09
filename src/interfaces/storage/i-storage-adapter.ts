@@ -7,6 +7,7 @@ export interface IStorageAdapter {
     exists(filePath: string): Promise<Result<boolean>>;
     list(folderPath: string): Promise<Result<string[]>>;
     createFolder(folderPath: string): Promise<Result<void>>;
+    rename?(oldPath: string, newPath: string): Promise<Result<void>>;
     watchFile?(filePath: string, callback: () => void): () => void;
     cleanup?(): void;
 }

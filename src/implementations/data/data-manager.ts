@@ -209,6 +209,64 @@ export class DataManager implements IDataManager {
         }
     }
 
+    async renameNote(id: string, newTitle: string): Promise<Result<StickyNote>> {
+        try {
+            // IDのバリデーション
+            const idValidation = NoteValidator.validateNoteId(id);
+            if (!idValidation.valid) {
+                const validationError = new ValidationError(
+                    idValidation.error!,
+                    'noteId',
+                    id
+                );
+                this.errorHandler.handleError(validationError, {
+                    component: 'DataManager',
+                    action: 'renameNote',
+                    noteId: id
+                });
+                return { success: false, error: validationError };
+            }
+
+            // タイトルのバリデーション（空文字列は許可するが、nullやundefinedは不可）
+            if (newTitle === null || newTitle === undefined) {
+                const validationError = new ValidationError(
+                    'Title cannot be null or undefined',
+                    'title',
+                    newTitle
+                );
+                this.errorHandler.handleError(validationError, {
+                    component: 'DataManager',
+                    action: 'renameNote',
+                    noteId: id
+                });
+                return { success: false, error: validationError };
+            }
+
+            const result = await this.noteRepository.rename(id, newTitle);
+            
+            if (result.success) {
+                this.eventBus.emit('note-renamed', { 
+                    note: result.data, 
+                    newTitle 
+                });
+                // note-updatedイベントも発火して、UIの更新をトリガー
+                this.eventBus.emit('note-updated', { 
+                    note: result.data, 
+                    changes: { title: newTitle } 
+                });
+            }
+            
+            return result;
+        } catch (error) {
+            this.errorHandler.handleError(error as Error, {
+                component: 'DataManager',
+                action: 'renameNote',
+                noteId: id
+            });
+            return { success: false, error: error as Error };
+        }
+    }
+
     async getNote(id: string): Promise<Result<StickyNote | null>> {
         try {
             // IDのバリデーション

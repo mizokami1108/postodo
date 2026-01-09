@@ -200,6 +200,139 @@ export class NoteRepository implements INoteRepository {
         }
     }
 
+    async rename(id: string, newTitle: string): Promise<Result<StickyNote>> {
+        try {
+            console.log(`[DEBUG] Renaming note ${id} to title: ${newTitle}`);
+            
+            // 既存のノートを取得
+            const noteResult = await this.findById(id);
+            if (!noteResult.success) {
+                return { success: false, error: noteResult.error };
+            }
+
+            if (!noteResult.data) {
+                return { success: false, error: new Error(`Note not found: ${id}`) };
+            }
+
+            const note = noteResult.data;
+            const oldFilePath = note.filePath;
+            
+            // 新しいファイル名を生成（タイトルをサニタイズ）
+            const sanitizedTitle = this.sanitizeFileName(newTitle);
+            const folderPath = oldFilePath.substring(0, oldFilePath.lastIndexOf('/'));
+            const newFilePath = `${folderPath}/${sanitizedTitle}.md`;
+            
+            console.log(`[DEBUG] Renaming file from ${oldFilePath} to ${newFilePath}`);
+            
+            // ファイルパスが同じ場合はタイトルのみ更新
+            if (oldFilePath === newFilePath) {
+                const updatedNote: StickyNote = {
+                    ...note,
+                    title: newTitle,
+                    metadata: {
+                        ...note.metadata,
+                        modified: new Date().toISOString()
+                    }
+                };
+                
+                const saveResult = await this.save(updatedNote);
+                if (!saveResult.success) {
+                    return { success: false, error: saveResult.error };
+                }
+                
+                return { success: true, data: updatedNote };
+            }
+            
+            // ファイルウォッチャーをクリーンアップ
+            this.cleanupFileWatcher(id);
+            
+            // ストレージアダプターにrenameメソッドがある場合は使用
+            if (this.storageAdapter.rename) {
+                const renameResult = await this.storageAdapter.rename(oldFilePath, newFilePath);
+                if (!renameResult.success) {
+                    // リネームに失敗した場合、ファイルウォッチャーを再設定
+                    this.setupFileWatcher(id, oldFilePath);
+                    return { success: false, error: renameResult.error };
+                }
+            } else {
+                // renameメソッドがない場合は、読み取り→書き込み→削除で対応
+                const readResult = await this.storageAdapter.read(oldFilePath);
+                if (!readResult.success) {
+                    this.setupFileWatcher(id, oldFilePath);
+                    return { success: false, error: readResult.error };
+                }
+                
+                const writeResult = await this.storageAdapter.write(newFilePath, readResult.data);
+                if (!writeResult.success) {
+                    this.setupFileWatcher(id, oldFilePath);
+                    return { success: false, error: writeResult.error };
+                }
+                
+                const deleteResult = await this.storageAdapter.delete(oldFilePath);
+                if (!deleteResult.success) {
+                    // 新しいファイルを削除してロールバック
+                    await this.storageAdapter.delete(newFilePath);
+                    this.setupFileWatcher(id, oldFilePath);
+                    return { success: false, error: deleteResult.error };
+                }
+            }
+            
+            // 更新されたノートを作成
+            const updatedNote: StickyNote = {
+                ...note,
+                filePath: newFilePath,
+                title: newTitle,
+                metadata: {
+                    ...note.metadata,
+                    modified: new Date().toISOString()
+                }
+            };
+            
+            // キャッシュを更新
+            this.noteCache.set(id, updatedNote);
+            
+            // 新しいファイルパスでファイルウォッチャーを設定
+            this.setupFileWatcher(id, newFilePath);
+            
+            // ファイル内容を更新（タイトルを反映）
+            const saveResult = await this.save(updatedNote);
+            if (!saveResult.success) {
+                console.warn(`[DEBUG] Failed to save updated note content after rename:`, saveResult.error);
+            }
+            
+            // イベントを発火
+            this.eventBus.emit('note-renamed', { 
+                noteId: id, 
+                oldFilePath, 
+                newFilePath, 
+                oldTitle: note.title,
+                newTitle 
+            });
+            
+            console.log(`[DEBUG] Successfully renamed note ${id}`);
+            return { success: true, data: updatedNote };
+        } catch (error) {
+            console.error(`[DEBUG] Error renaming note ${id}:`, error);
+            return { success: false, error: error as Error };
+        }
+    }
+
+    /**
+     * ファイル名として使用できるようにタイトルをサニタイズする
+     */
+    private sanitizeFileName(title: string): string {
+        if (!title || title.trim() === '') {
+            return `Sticky-${Date.now()}`;
+        }
+        
+        // ファイル名として使用できない文字を置換
+        return title
+            .trim()
+            .replace(/[\\/:*?"<>|]/g, '-')  // Windows/Unix で使用できない文字
+            .replace(/\s+/g, ' ')            // 連続する空白を単一の空白に
+            .substring(0, 100);              // 長すぎるファイル名を制限
+    }
+
 
     private setSyncStatus(noteId: string, status: 'syncing' | 'synced' | 'error'): void {
         this.syncStatus.set(noteId, status);

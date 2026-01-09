@@ -587,3 +587,45 @@
         flex: 1;
     }
 }
+
+
+/* タイトル要素 */
+.note-title {
+    font-weight: bold;
+    margin-bottom: 4px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding-bottom: 4px;
+    min-height: 20px;
+    cursor: text;
+    font-size: 14px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.note-title:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+}
+
+/* タイトル編集時のスタイル */
+.note-title-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-weight: bold;
+    outline: 2px solid #4a90d9;
+    border-radius: 2px;
+    padding: 2px;
+    font-size: 14px;
+    font-family: inherit;
+}
+
+/* ダークテーマ対応 */
+.theme-dark .note-title {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.theme-dark .note-title:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
