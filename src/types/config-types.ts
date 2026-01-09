@@ -44,7 +44,11 @@ export interface PostodoSettings extends PostodoConfig {
     namingStrategy: NamingStrategyType;
     // 表示フィルター設定
     defaultDisplayFilter: DisplayFilterType;
+    // 言語設定
+    language: LanguageType;
 }
+
+export type LanguageType = 'en' | 'ja';
 
 export type RenderingEngine = 'dom' | 'canvas' | 'svg';
 export type AnimationEngine = 'css' | 'web-animations' | 'custom';
@@ -72,6 +76,7 @@ export const DEFAULT_SETTINGS: PostodoSettings = {
     canvasFileName: 'postodo-canvas.md',
     namingStrategy: 'timestamp',
     defaultDisplayFilter: 'incomplete',
+    language: 'ja',
     core: {
         maxNotes: 1000,
         autoSave: true,

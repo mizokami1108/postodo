@@ -1,23 +1,38 @@
 import { App, PluginSettingTab, Setting, Modal, Plugin } from 'obsidian';
 import { PostodoPlugin } from '../core/plugin';
-import { PostodoSettings } from '../types/config-types';
+import { PostodoSettings, NamingStrategyType, DisplayFilterType, LanguageType } from '../types/config-types';
+import { getTranslations, Translations, Language } from '../i18n/translations';
 
 export class PostodoSettingsTab extends PluginSettingTab {
     postodoPlugin: PostodoPlugin;
+    private t: Translations;
 
     constructor(app: App, plugin: Plugin, postodoPlugin: PostodoPlugin) {
         super(app, plugin);
         this.postodoPlugin = postodoPlugin;
+        this.t = getTranslations(this.postodoPlugin.getSettings().language as Language || 'ja');
     }
 
     display(): void {
         const { containerEl } = this;
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Postodo Settings' });
+        // 翻訳を更新
+        this.t = getTranslations(this.postodoPlugin.getSettings().language as Language || 'ja');
 
+        containerEl.createEl('h2', { text: this.t.settings.title });
+
+        // 言語設定セクション（最上部に配置）
+        this.createLanguageSettings(containerEl);
+        
         // 基本設定セクション
         this.createBasicSettings(containerEl);
+        
+        // 命名戦略設定セクション
+        this.createNamingSettings(containerEl);
+        
+        // 表示フィルター設定セクション
+        this.createDisplayFilterSettings(containerEl);
         
         // レンダリング設定セクション  
         this.createRenderingSettings(containerEl);
@@ -32,15 +47,33 @@ export class PostodoSettingsTab extends PluginSettingTab {
         this.createAdvancedSettings(containerEl);
     }
 
+    private createLanguageSettings(containerEl: HTMLElement): void {
+        const settings = this.postodoPlugin.getSettings();
+
+        new Setting(containerEl)
+            .setName(this.t.settings.language.name)
+            .setDesc(this.t.settings.language.desc)
+            .addDropdown(dropdown => dropdown
+                .addOption('en', 'English')
+                .addOption('ja', '日本語')
+                .setValue(settings.language || 'ja')
+                .onChange(async (value) => {
+                    settings.language = value as LanguageType;
+                    await this.postodoPlugin.saveSettings();
+                    // 設定画面を再描画して言語を反映
+                    this.display();
+                }));
+    }
+
     private createBasicSettings(containerEl: HTMLElement): void {
-        containerEl.createEl('h3', { text: 'Basic Settings' });
+        containerEl.createEl('h3', { text: this.t.settings.basic.title });
 
         const settings = this.postodoPlugin.getSettings();
 
         // 付箋フォルダーの設定
         new Setting(containerEl)
-            .setName('Notes folder')
-            .setDesc('Folder where Postodo notes will be stored')
+            .setName(this.t.settings.basic.notesFolder.name)
+            .setDesc(this.t.settings.basic.notesFolder.desc)
             .addText(text => text
                 .setPlaceholder('Postodo')
                 .setValue(settings.postodoFolder)
@@ -51,8 +84,8 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         // 自動保存の設定
         new Setting(containerEl)
-            .setName('Auto save')
-            .setDesc('Automatically save notes when modified')
+            .setName(this.t.settings.basic.autoSave.name)
+            .setDesc(this.t.settings.basic.autoSave.desc)
             .addToggle(toggle => toggle
                 .setValue(settings.core.autoSave)
                 .onChange(async (value) => {
@@ -62,8 +95,8 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         // 保存間隔の設定
         new Setting(containerEl)
-            .setName('Save interval (ms)')
-            .setDesc('How often to save notes automatically')
+            .setName(this.t.settings.basic.saveInterval.name)
+            .setDesc(this.t.settings.basic.saveInterval.desc)
             .addSlider(slider => slider
                 .setLimits(100, 5000, 100)
                 .setValue(settings.core.saveInterval)
@@ -74,15 +107,55 @@ export class PostodoSettingsTab extends PluginSettingTab {
                 }));
     }
 
+    private createNamingSettings(containerEl: HTMLElement): void {
+        containerEl.createEl('h3', { text: this.t.settings.naming.title });
+
+        const settings = this.postodoPlugin.getSettings();
+
+        // 命名戦略の選択
+        new Setting(containerEl)
+            .setName(this.t.settings.naming.strategy.name)
+            .setDesc(this.t.settings.naming.strategy.desc)
+            .addDropdown(dropdown => dropdown
+                .addOption('timestamp', this.t.settings.naming.strategy.options.timestamp)
+                .addOption('sequential', this.t.settings.naming.strategy.options.sequential)
+                .addOption('custom', this.t.settings.naming.strategy.options.custom)
+                .setValue(settings.namingStrategy)
+                .onChange(async (value) => {
+                    settings.namingStrategy = value as NamingStrategyType;
+                    await this.postodoPlugin.saveSettings();
+                }));
+    }
+
+    private createDisplayFilterSettings(containerEl: HTMLElement): void {
+        containerEl.createEl('h3', { text: this.t.settings.displayFilter.title });
+
+        const settings = this.postodoPlugin.getSettings();
+
+        // デフォルト表示フィルターの選択
+        new Setting(containerEl)
+            .setName(this.t.settings.displayFilter.default.name)
+            .setDesc(this.t.settings.displayFilter.default.desc)
+            .addDropdown(dropdown => dropdown
+                .addOption('incomplete', this.t.settings.displayFilter.default.options.incomplete)
+                .addOption('complete', this.t.settings.displayFilter.default.options.complete)
+                .addOption('all', this.t.settings.displayFilter.default.options.all)
+                .setValue(settings.defaultDisplayFilter)
+                .onChange(async (value) => {
+                    settings.defaultDisplayFilter = value as DisplayFilterType;
+                    await this.postodoPlugin.saveSettings();
+                }));
+    }
+
     private createRenderingSettings(containerEl: HTMLElement): void {
-        containerEl.createEl('h3', { text: 'Rendering Settings' });
+        containerEl.createEl('h3', { text: this.t.settings.rendering.title });
 
         const settings = this.postodoPlugin.getSettings();
 
         // 仮想化の設定
         new Setting(containerEl)
-            .setName('Enable virtualization')
-            .setDesc('Improve performance with many notes')
+            .setName(this.t.settings.rendering.virtualization.name)
+            .setDesc(this.t.settings.rendering.virtualization.desc)
             .addToggle(toggle => toggle
                 .setValue(settings.rendering.virtualization)
                 .onChange(async (value) => {
@@ -92,8 +165,8 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         // 最大レンダリング数
         new Setting(containerEl)
-            .setName('Max rendered notes')
-            .setDesc('Maximum number of notes to render at once')
+            .setName(this.t.settings.rendering.maxRenderedNotes.name)
+            .setDesc(this.t.settings.rendering.maxRenderedNotes.desc)
             .addSlider(slider => slider
                 .setLimits(20, 500, 10)
                 .setValue(settings.rendering.maxRenderedNotes)
@@ -105,18 +178,18 @@ export class PostodoSettingsTab extends PluginSettingTab {
     }
 
     private createStorageSettings(containerEl: HTMLElement): void {
-        containerEl.createEl('h3', { text: 'Storage Settings' });
+        containerEl.createEl('h3', { text: this.t.settings.storage.title });
 
         const settings = this.postodoPlugin.getSettings();
 
         // 同期戦略の選択
         new Setting(containerEl)
-            .setName('Sync strategy')
-            .setDesc('How notes are synchronized')
+            .setName(this.t.settings.storage.syncStrategy.name)
+            .setDesc(this.t.settings.storage.syncStrategy.desc)
             .addDropdown(dropdown => dropdown
-                .addOption('real-time', 'Real-time')
-                .addOption('manual', 'Manual')
-                .addOption('periodic', 'Periodic')
+                .addOption('real-time', this.t.settings.storage.syncStrategy.options.realTime)
+                .addOption('manual', this.t.settings.storage.syncStrategy.options.manual)
+                .addOption('periodic', this.t.settings.storage.syncStrategy.options.periodic)
                 .setValue(settings.storage.syncStrategy)
                 .onChange(async (value) => {
                     settings.storage.syncStrategy = value as any;
@@ -125,12 +198,12 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         // 競合解決の設定
         new Setting(containerEl)
-            .setName('Conflict resolution')
-            .setDesc('How to handle editing conflicts')
+            .setName(this.t.settings.storage.conflictResolution.name)
+            .setDesc(this.t.settings.storage.conflictResolution.desc)
             .addDropdown(dropdown => dropdown
-                .addOption('auto-merge', 'Auto merge')
-                .addOption('user-choice', 'Ask user')
-                .addOption('last-write-wins', 'Last write wins')
+                .addOption('auto-merge', this.t.settings.storage.conflictResolution.options.autoMerge)
+                .addOption('user-choice', this.t.settings.storage.conflictResolution.options.userChoice)
+                .addOption('last-write-wins', this.t.settings.storage.conflictResolution.options.lastWriteWins)
                 .setValue(settings.storage.conflictResolution)
                 .onChange(async (value) => {
                     settings.storage.conflictResolution = value as any;
@@ -139,14 +212,14 @@ export class PostodoSettingsTab extends PluginSettingTab {
     }
 
     private createUISettings(containerEl: HTMLElement): void {
-        containerEl.createEl('h3', { text: 'UI Settings' });
+        containerEl.createEl('h3', { text: this.t.settings.ui.title });
 
         const settings = this.postodoPlugin.getSettings();
 
         // グリッド表示
         new Setting(containerEl)
-            .setName('Show grid')
-            .setDesc('Display grid lines on canvas')
+            .setName(this.t.settings.ui.showGrid.name)
+            .setDesc(this.t.settings.ui.showGrid.desc)
             .addToggle(toggle => toggle
                 .setValue(settings.ui.showGrid)
                 .onChange(async (value) => {
@@ -156,8 +229,8 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         // グリッドスナップ
         new Setting(containerEl)
-            .setName('Snap to grid')
-            .setDesc('Snap notes to grid when moving')
+            .setName(this.t.settings.ui.snapToGrid.name)
+            .setDesc(this.t.settings.ui.snapToGrid.desc)
             .addToggle(toggle => toggle
                 .setValue(settings.ui.snapToGrid)
                 .onChange(async (value) => {
@@ -167,14 +240,14 @@ export class PostodoSettingsTab extends PluginSettingTab {
     }
 
     private createAdvancedSettings(containerEl: HTMLElement): void {
-        containerEl.createEl('h3', { text: 'Advanced Settings' });
+        containerEl.createEl('h3', { text: this.t.settings.advanced.title });
 
         const settings = this.postodoPlugin.getSettings();
 
         // デバッグモード
         new Setting(containerEl)
-            .setName('Debug mode')
-            .setDesc('Enable debug logging and development tools')
+            .setName(this.t.settings.advanced.debugMode.name)
+            .setDesc(this.t.settings.advanced.debugMode.desc)
             .addToggle(toggle => toggle
                 .setValue(settings.core.enableDebugMode)
                 .onChange(async (value) => {
@@ -184,8 +257,8 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         // 最大ノート数
         new Setting(containerEl)
-            .setName('Max notes')
-            .setDesc('Maximum number of notes allowed')
+            .setName(this.t.settings.advanced.maxNotes.name)
+            .setDesc(this.t.settings.advanced.maxNotes.desc)
             .addText(text => text
                 .setValue(settings.core.maxNotes.toString())
                 .onChange(async (value) => {
@@ -198,10 +271,10 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         // データクリア
         new Setting(containerEl)
-            .setName('Clear all data')
-            .setDesc('Delete all notes and reset settings')
+            .setName(this.t.settings.advanced.clearData.name)
+            .setDesc(this.t.settings.advanced.clearData.desc)
             .addButton(button => button
-                .setButtonText('Clear Data')
+                .setButtonText(this.t.settings.advanced.clearData.button)
                 .setWarning()
                 .onClick(async () => {
                     const confirmed = await this.confirmDataClear();
@@ -215,8 +288,10 @@ export class PostodoSettingsTab extends PluginSettingTab {
         return new Promise((resolve) => {
             const modal = new ConfirmationModal(
                 this.app,
-                'Clear All Data',
-                'This will permanently delete all Postodo notes. This action cannot be undone.',
+                this.t.settings.advanced.clearData.confirmTitle,
+                this.t.settings.advanced.clearData.confirmMessage,
+                this.t.settings.advanced.clearData.cancel,
+                this.t.settings.advanced.clearData.confirm,
                 resolve
             );
             modal.open();
@@ -241,6 +316,8 @@ class ConfirmationModal extends Modal {
         app: App,
         private title: string,
         private message: string,
+        private cancelText: string,
+        private confirmText: string,
         private callback: (confirmed: boolean) => void
     ) {
         super(app);
@@ -253,14 +330,14 @@ class ConfirmationModal extends Modal {
 
         const buttonContainer = contentEl.createDiv('modal-button-container');
         
-        const cancelBtn = buttonContainer.createEl('button', { text: 'Cancel' });
+        const cancelBtn = buttonContainer.createEl('button', { text: this.cancelText });
         cancelBtn.onclick = () => {
             this.callback(false);
             this.close();
         };
 
         const confirmBtn = buttonContainer.createEl('button', { 
-            text: 'Confirm',
+            text: this.confirmText,
             cls: 'mod-warning'
         });
         confirmBtn.onclick = () => {

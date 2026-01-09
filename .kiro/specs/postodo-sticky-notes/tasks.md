@@ -107,12 +107,12 @@
   - 全てのテストが通ることを確認
   - 質問があればユーザーに確認
 
-- [ ] 8. プラグイン設定画面の拡充
-  - [ ] 8.1 PostodoSettingsTab の拡張
+- [x] 8. プラグイン設定画面の拡充
+  - [x] 8.1 PostodoSettingsTab の拡張
     - Naming_Strategy 選択オプションの追加
     - デフォルト Display_Filter 設定の追加
     - _Requirements: 13.1, 13.2, 13.4_
-  - [ ] 8.2 設定変更の即座反映
+  - [x] 8.2 設定変更の即座反映
     - ConfigProvider の設定変更通知
     - UI への即座反映
     - _Requirements: 13.3_

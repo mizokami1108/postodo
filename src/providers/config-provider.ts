@@ -154,7 +154,9 @@ export class ConfigProvider {
             'core.maxNotes',
             'core.saveInterval',
             'rendering.maxRenderedNotes',
-            'postodoFolder'
+            'postodoFolder',
+            'namingStrategy',
+            'defaultDisplayFilter'
         ];
         
         importantPaths.forEach(path => {
@@ -162,7 +164,14 @@ export class ConfigProvider {
             const newValue = this.getValueByPath(newConfig, path);
             
             if (oldValue !== newValue) {
-                this.eventBus!.emit('config-changed', { path, value: newValue });
+                this.eventBus!.emit('config-changed', { path, value: newValue, oldValue });
+                
+                // 特定の設定変更に対して専用イベントを発行
+                if (path === 'namingStrategy') {
+                    this.eventBus!.emit('naming-strategy-changed', { strategy: newValue, oldStrategy: oldValue });
+                } else if (path === 'defaultDisplayFilter') {
+                    this.eventBus!.emit('default-display-filter-changed', { filter: newValue, oldFilter: oldValue });
+                }
             }
         });
     }

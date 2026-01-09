@@ -11,6 +11,7 @@ import { IEventBus } from '../core/event-bus';
 import { PostodoNoteDetector } from '../utils/postodo-note-detector';
 import { DisplayFilter } from '../implementations/ui/display-filter';
 import { DisplayFilterType } from '../interfaces/ui/i-display-filter';
+import { ConfigProvider } from '../providers/config-provider';
 
 export class PostodoView extends ItemView {
     private dataManager: DataManager;
@@ -30,8 +31,12 @@ export class PostodoView extends ItemView {
         this.dataManager = container.resolve<DataManager>(SERVICE_TOKENS.DATA_MANAGER);
         this.errorHandler = ErrorHandler.getInstance(container.resolve(SERVICE_TOKENS.EVENT_BUS));
         
-        // DisplayFilterの初期化（デフォルト: 未完了のみ表示）
-        this.displayFilter = new DisplayFilter('incomplete');
+        // 設定からデフォルト表示フィルターを取得
+        const configProvider = container.resolve<ConfigProvider>(SERVICE_TOKENS.CONFIG);
+        const defaultFilter = configProvider.get<DisplayFilterType>('defaultDisplayFilter') || 'incomplete';
+        
+        // DisplayFilterの初期化（設定のデフォルトフィルターを使用）
+        this.displayFilter = new DisplayFilter(defaultFilter);
         
         this.setupEventListeners();
     }
@@ -259,6 +264,20 @@ export class PostodoView extends ItemView {
         eventBus.on('note-externally-modified', (event: any) => {
             if (event?.noteId && event?.newNote) {
                 this.handleExternalModification(event.noteId, event.newNote);
+            }
+        });
+
+        // デフォルト表示フィルター設定変更の監視
+        eventBus.on('default-display-filter-changed', (event: any) => {
+            if (event?.filter) {
+                this.handleDefaultDisplayFilterChange(event.filter);
+            }
+        });
+
+        // 命名戦略設定変更の監視
+        eventBus.on('naming-strategy-changed', (event: any) => {
+            if (event?.strategy) {
+                this.handleNamingStrategyChange(event.strategy);
             }
         });
     }
@@ -1045,6 +1064,44 @@ export class PostodoView extends ItemView {
                 this.hideNoteElement(noteId);
             }
         }
+    }
+
+    private handleDefaultDisplayFilterChange(filter: DisplayFilterType): void {
+        // デフォルト表示フィルターの変更に応じた処理
+        console.log(`[DEBUG] PostodoView: Default display filter changed to ${filter}`);
+        
+        // 現在のフィルターを新しいデフォルトに更新
+        this.displayFilter.setFilter(filter);
+        
+        // フィルターセレクトボックスの値を更新
+        if (this.filterSelectEl) {
+            this.filterSelectEl.value = filter;
+        }
+        
+        // 通知を表示
+        const filterLabels: Record<DisplayFilterType, string> = {
+            'incomplete': '未完了のみ',
+            'complete': '完了のみ',
+            'all': 'すべて'
+        };
+        this.feedbackSystem?.showInfo(`デフォルトフィルターが「${filterLabels[filter]}」に変更されました`);
+        
+        // 付箋の表示を更新（setFilterで自動的にonFilterChangedが呼ばれるため、renderAllNotesは不要）
+    }
+
+    private handleNamingStrategyChange(strategy: string): void {
+        // 命名戦略の変更に応じた処理
+        console.log(`[DEBUG] PostodoView: Naming strategy changed to ${strategy}`);
+        
+        // 通知を表示
+        const strategyLabels: Record<string, string> = {
+            'timestamp': 'タイムスタンプ形式',
+            'sequential': '連番形式',
+            'custom': 'カスタム形式'
+        };
+        this.feedbackSystem?.showInfo(`命名戦略が「${strategyLabels[strategy] || strategy}」に変更されました`);
+        
+        // 命名戦略の変更は新規作成時に適用されるため、既存の付箋には影響しない
     }
 
     private adjustCanvasHeight(): void {
