@@ -9,22 +9,30 @@ import { NoteValidator } from '../utils/validators';
 import { ErrorHandler, PostodoError } from '../utils/error-handler';
 import { IEventBus } from '../core/event-bus';
 import { PostodoNoteDetector } from '../utils/postodo-note-detector';
+import { DisplayFilter } from '../implementations/ui/display-filter';
+import { DisplayFilterType } from '../interfaces/ui/i-display-filter';
 
 export class PostodoView extends ItemView {
     private dataManager: DataManager;
     private canvasEl!: HTMLElement;
     private inputEl!: HTMLInputElement;
+    private filterSelectEl!: HTMLSelectElement;
     private notes: StickyNote[] = [];
     private dragHandlers = new Map<string, SimpleDragHandler>();
     private feedbackSystem!: FeedbackSystem;
     private errorHandler: ErrorHandler;
     private lastDragEndTime = 0;
-    // 完了済み付箋は常に非表示
+    private displayFilter: DisplayFilter;
+    private filterUnsubscribe?: () => void;
 
     constructor(leaf: WorkspaceLeaf, private container: DIContainer) {
         super(leaf);
         this.dataManager = container.resolve<DataManager>(SERVICE_TOKENS.DATA_MANAGER);
         this.errorHandler = ErrorHandler.getInstance(container.resolve(SERVICE_TOKENS.EVENT_BUS));
+        
+        // DisplayFilterの初期化（デフォルト: 未完了のみ表示）
+        this.displayFilter = new DisplayFilter('incomplete');
+        
         this.setupEventListeners();
     }
 
@@ -66,6 +74,12 @@ export class PostodoView extends ItemView {
             this.feedbackSystem.cleanup();
         }
         
+        // DisplayFilterのクリーンアップ
+        if (this.filterUnsubscribe) {
+            this.filterUnsubscribe();
+        }
+        this.displayFilter.cleanup();
+        
         // ウィンドウリサイズイベントの削除
         window.removeEventListener('resize', this.adjustCanvasHeight.bind(this));
     }
@@ -88,6 +102,34 @@ export class PostodoView extends ItemView {
         const addBtn = controlsEl.createEl('button', {
             text: 'Add Note',
             cls: 'postodo-add-btn'
+        });
+
+        // フィルターコントロール
+        const filterContainer = controlsEl.createEl('div', { cls: 'postodo-filter-container' });
+        const filterLabel = filterContainer.createEl('label', {
+            text: 'フィルター: ',
+            cls: 'postodo-filter-label'
+        });
+        
+        this.filterSelectEl = filterContainer.createEl('select', {
+            cls: 'postodo-filter-select'
+        });
+        
+        // フィルターオプションを追加
+        const filterOptions: { value: DisplayFilterType; label: string }[] = [
+            { value: 'incomplete', label: '未完了のみ' },
+            { value: 'complete', label: '完了のみ' },
+            { value: 'all', label: 'すべて' }
+        ];
+        
+        filterOptions.forEach(option => {
+            const optionEl = this.filterSelectEl.createEl('option', {
+                value: option.value,
+                text: option.label
+            });
+            if (option.value === this.displayFilter.currentFilter) {
+                optionEl.selected = true;
+            }
         });
 
         // キャンバス
@@ -115,6 +157,17 @@ export class PostodoView extends ItemView {
             if (e.target === this.canvasEl && Date.now() - this.lastDragEndTime > 100) {
                 this.createNoteAtPosition(e.offsetX, e.offsetY);
             }
+        });
+
+        // フィルター変更
+        this.filterSelectEl.addEventListener('change', () => {
+            const newFilter = this.filterSelectEl.value as DisplayFilterType;
+            this.displayFilter.setFilter(newFilter);
+        });
+
+        // フィルター変更時の再描画
+        this.filterUnsubscribe = this.displayFilter.onFilterChanged(() => {
+            this.renderAllNotes();
         });
     }
 
@@ -147,22 +200,25 @@ export class PostodoView extends ItemView {
                 this.notes.push(note);
             }
             
-            // 完了状態に応じて表示を更新
-            if (note.completed) {
-                // 完了済みの場合は非表示にする
-                console.log(`[DEBUG] PostodoView: Hiding completed note ${note.id}`);
-                this.hideNoteElement(note.id);
-            } else {
-                // 未完了の場合は表示または更新
-                const existingElement = this.canvasEl.querySelector(`[data-note-id="${note.id}"]`);
+            // DisplayFilterを使用して表示を更新
+            const shouldShow = this.displayFilter.shouldDisplay(note);
+            const existingElement = this.canvasEl.querySelector(`[data-note-id="${note.id}"]`);
+            
+            if (shouldShow) {
                 if (existingElement) {
                     // 既に表示されている場合は更新
                     console.log(`[DEBUG] PostodoView: Updating existing note ${note.id}`);
                     this.updateNoteElement(note);
                 } else {
                     // 表示されていない場合は新しく描画
-                    console.log(`[DEBUG] PostodoView: Rendering uncompleted note ${note.id}`);
+                    console.log(`[DEBUG] PostodoView: Rendering note ${note.id}`);
                     this.renderNote(note);
+                }
+            } else {
+                // フィルターにより非表示にする
+                if (existingElement) {
+                    console.log(`[DEBUG] PostodoView: Hiding note ${note.id} due to filter`);
+                    this.hideNoteElement(note.id);
                 }
             }
         });
@@ -289,19 +345,22 @@ export class PostodoView extends ItemView {
             if (noteIndex !== -1) {
                 this.notes[noteIndex] = { ...this.notes[noteIndex], completed: newCompleted };
                 
-                // 完了状態に応じて付箋の表示を更新
-                if (newCompleted) {
-                    // 完了済み付箋は常に非表示にする
-                    this.hideNoteElement(noteId);
-                } else {
-                    // 未完了に戻した場合は表示または更新
-                    const existingElement = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`);
+                // DisplayFilterを使用して表示を更新
+                const shouldShow = this.displayFilter.shouldDisplay(this.notes[noteIndex]);
+                const existingElement = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`);
+                
+                if (shouldShow) {
                     if (existingElement) {
                         // 既に表示されている場合は更新
                         this.updateNoteElement(this.notes[noteIndex]);
                     } else {
                         // 表示されていない場合は新しく描画
                         this.renderNote(this.notes[noteIndex]);
+                    }
+                } else {
+                    // フィルターにより非表示にする
+                    if (existingElement) {
+                        this.hideNoteElement(noteId);
                     }
                 }
             }
@@ -316,16 +375,16 @@ export class PostodoView extends ItemView {
 
 
     private renderAllNotes(): void {
-        console.log(`[DEBUG] PostodoView: Rendering ${this.notes.length} notes`);
+        console.log(`[DEBUG] PostodoView: Rendering ${this.notes.length} notes with filter: ${this.displayFilter.currentFilter}`);
         this.canvasEl.empty();
         
         // 全てのドラッグハンドラーをクリーンアップ
         this.dragHandlers.forEach(handler => handler.cleanup());
         this.dragHandlers.clear();
         
-        // 完了済み付箋は常に非表示にする
-        const notesToShow = this.notes.filter(note => !note.completed);
-        console.log(`[DEBUG] PostodoView: Showing ${notesToShow.length} non-completed notes`);
+        // DisplayFilterを使用して表示する付箋をフィルタリング
+        const notesToShow = this.notes.filter(note => this.displayFilter.shouldDisplay(note));
+        console.log(`[DEBUG] PostodoView: Showing ${notesToShow.length} notes after filtering`);
         
         notesToShow.forEach(note => {
             this.renderNote(note);
@@ -790,19 +849,22 @@ export class PostodoView extends ItemView {
             this.notes[noteIndex] = newNote;
         }
         
-        // 完了状態に応じて表示を更新
-        if (newNote.completed) {
-            // 完了済みの場合は非表示にする
-            this.hideNoteElement(noteId);
-        } else {
-            // 未完了の場合は表示または更新
-            const existingElement = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`);
+        // DisplayFilterを使用して表示を更新
+        const shouldShow = this.displayFilter.shouldDisplay(newNote);
+        const existingElement = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`);
+        
+        if (shouldShow) {
             if (existingElement) {
                 // 既に表示されている場合は更新
                 this.updateNoteElement(newNote);
             } else {
                 // 表示されていない場合は新しく描画
                 this.renderNote(newNote);
+            }
+        } else {
+            // フィルターにより非表示にする
+            if (existingElement) {
+                this.hideNoteElement(noteId);
             }
         }
     }

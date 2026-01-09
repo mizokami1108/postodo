@@ -99,7 +99,8 @@ export const SERVICE_TOKENS = {
     
     // UI Services
     THEME_PROVIDER: 'ThemeProvider',
-    LAYOUT_MANAGER: 'LayoutManager'
+    LAYOUT_MANAGER: 'LayoutManager',
+    DISPLAY_FILTER: 'DisplayFilter'
 } as const;
 
 export type ServiceToken = typeof SERVICE_TOKENS[keyof typeof SERVICE_TOKENS];

@@ -46,20 +46,20 @@
     - **Property 19: 連番の一意性保証**
     - **Validates: Requirements 13.5**
 
-- [ ] 3. 表示フィルターの実装
-  - [ ] 3.1 DisplayFilter インターフェースと実装の作成
+- [x] 3. 表示フィルターの実装
+  - [x] 3.1 DisplayFilter インターフェースと実装の作成
     - `src/interfaces/ui/i-display-filter.ts` を作成
     - `src/implementations/ui/display-filter.ts` を作成
     - 3つのフィルターオプション: incomplete, complete, all
     - _Requirements: 4.5, 4.7_
-  - [ ] 3.2 PostodoView へのフィルター UI 追加
+  - [x] 3.2 PostodoView へのフィルター UI 追加
     - フィルター選択ドロップダウンを追加
     - フィルター変更時の即座更新
     - _Requirements: 4.6_
-  - [ ] 3.3 DataManager のフィルター対応
+  - [x] 3.3 DataManager のフィルター対応
     - フィルター条件に基づく付箋の表示/非表示ロジック
     - _Requirements: 4.2, 4.3_
-  - [ ] 3.4 プロパティテスト: フィルターと完了ステータスの連動
+  - [x] 3.4 プロパティテスト: フィルターと完了ステータスの連動
     - **Property 8: 完了ステータスとフィルターの連動**
     - **Validates: Requirements 4.2, 4.3, 4.6**
 

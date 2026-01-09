@@ -7,7 +7,8 @@ import { ErrorHandler, ValidationError } from '../../utils/error-handler';
 import { ConfigProvider } from '../../providers/config-provider';
 import { INamingStrategy } from '../../interfaces/naming/i-naming-strategy';
 import { NamingStrategyFactory } from '../naming/naming-strategy-factory';
-import { NamingStrategyType } from '../../types/config-types';
+import { NamingStrategyType, DisplayFilterType } from '../../types/config-types';
+import { IDisplayFilter } from '../../interfaces/ui/i-display-filter';
 
 export class DataManager implements IDataManager {
     private editingNotes = new Set<string>();
@@ -55,15 +56,6 @@ export class DataManager implements IDataManager {
      */
     getNamingStrategy(): INamingStrategy {
         return this.currentNamingStrategy;
-    }
-
-    constructor(
-        private noteRepository: INoteRepository,
-        private eventBus: IEventBus,
-        private configProvider?: ConfigProvider
-    ) {
-        this.errorHandler = ErrorHandler.getInstance(eventBus);
-        this.setupConfigWatchers();
     }
 
     async createNote(options: CreateNoteOptions): Promise<Result<StickyNote>> {
@@ -258,6 +250,68 @@ export class DataManager implements IDataManager {
         }
     }
 
+    /**
+     * フィルター条件に基づいて付箋を取得する
+     * @param filter 表示フィルター
+     * @returns フィルタリングされた付箋の配列
+     */
+    async getFilteredNotes(filter: IDisplayFilter): Promise<Result<StickyNote[]>> {
+        try {
+            const result = await this.noteRepository.findAll();
+            
+            if (!result.success) {
+                return result;
+            }
+            
+            const filteredNotes = result.data.filter(note => filter.shouldDisplay(note));
+            return { success: true, data: filteredNotes };
+        } catch (error) {
+            this.errorHandler.handleError(error as Error, {
+                component: 'DataManager',
+                action: 'getFilteredNotes'
+            });
+            return { success: false, error: error as Error };
+        }
+    }
+
+    /**
+     * 完了状態でフィルタリングされた付箋を取得する
+     * @param filterType フィルター種類
+     * @returns フィルタリングされた付箋の配列
+     */
+    async getNotesByCompletionStatus(filterType: DisplayFilterType): Promise<Result<StickyNote[]>> {
+        try {
+            const result = await this.noteRepository.findAll();
+            
+            if (!result.success) {
+                return result;
+            }
+            
+            let filteredNotes: StickyNote[];
+            
+            switch (filterType) {
+                case 'incomplete':
+                    filteredNotes = result.data.filter(note => !note.completed);
+                    break;
+                case 'complete':
+                    filteredNotes = result.data.filter(note => note.completed);
+                    break;
+                case 'all':
+                default:
+                    filteredNotes = result.data;
+                    break;
+            }
+            
+            return { success: true, data: filteredNotes };
+        } catch (error) {
+            this.errorHandler.handleError(error as Error, {
+                component: 'DataManager',
+                action: 'getNotesByCompletionStatus'
+            });
+            return { success: false, error: error as Error };
+        }
+    }
+
     isNoteBeingEdited(id: string): boolean {
         return this.editingNotes.has(id);
     }
@@ -358,6 +412,9 @@ export class DataManager implements IDataManager {
             case 'namingStrategy':
                 this.updateNamingStrategy();
                 this.eventBus.emit('naming-strategy-changed', { namingStrategy: value });
+                break;
+            case 'defaultDisplayFilter':
+                this.eventBus.emit('display-filter-changed', { displayFilter: value });
                 break;
         }
     }

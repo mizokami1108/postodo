@@ -42,6 +42,8 @@ export interface PostodoSettings extends PostodoConfig {
     canvasFileName: string;
     // 命名戦略設定
     namingStrategy: NamingStrategyType;
+    // 表示フィルター設定
+    defaultDisplayFilter: DisplayFilterType;
 }
 
 export type RenderingEngine = 'dom' | 'canvas' | 'svg';
@@ -50,6 +52,7 @@ export type StorageAdapter = 'obsidian-vault' | 'memory' | 'custom';
 export type SyncStrategy = 'real-time' | 'manual' | 'periodic';
 export type ConflictResolution = 'auto-merge' | 'user-choice' | 'last-write-wins';
 export type NamingStrategyType = 'timestamp' | 'sequential' | 'custom';
+export type DisplayFilterType = 'incomplete' | 'complete' | 'all';
 
 export type DeepPartial<T> = {
     [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -68,6 +71,7 @@ export const DEFAULT_SETTINGS: PostodoSettings = {
     postodoFolder: 'Postodo',
     canvasFileName: 'postodo-canvas.md',
     namingStrategy: 'timestamp',
+    defaultDisplayFilter: 'incomplete',
     core: {
         maxNotes: 1000,
         autoSave: true,

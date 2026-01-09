@@ -1,4 +1,6 @@
 import { StickyNote, CreateNoteOptions, UpdateNoteOptions, Result } from '../../types/core-types';
+import { DisplayFilterType } from '../../types/config-types';
+import { IDisplayFilter } from '../ui/i-display-filter';
 
 export interface IDataManager {
     createNote(options: CreateNoteOptions): Promise<Result<StickyNote>>;
@@ -6,6 +8,8 @@ export interface IDataManager {
     deleteNote(id: string): Promise<Result<void>>;
     getNote(id: string): Promise<Result<StickyNote | null>>;
     getAllNotes(): Promise<Result<StickyNote[]>>;
+    getFilteredNotes(filter: IDisplayFilter): Promise<Result<StickyNote[]>>;
+    getNotesByCompletionStatus(filterType: DisplayFilterType): Promise<Result<StickyNote[]>>;
     isNoteBeingEdited(id: string): boolean;
     
     // イベント
