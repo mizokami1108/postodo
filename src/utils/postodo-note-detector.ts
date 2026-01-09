@@ -25,6 +25,7 @@ export interface TaskMatch {
 
 export interface PostodoNoteData {
     id: string;
+    title: string;
     content: string;
     completed: boolean;
     position?: { x: number; y: number; zIndex: number };
@@ -48,6 +49,42 @@ export class PostodoNoteDetector {
         PRIORITY_HIGH: /🔼/,
         PRIORITY_LOW: /🔽/
     };
+
+    // H1見出しパターン（タイトル抽出用）
+    static TITLE_PATTERN = /^#\s+(.+)$/m;
+
+    /**
+     * Markdownコンテンツからタイトル（H1見出し）を抽出する
+     * @param content Markdownコンテンツ
+     * @returns タイトル文字列、見つからない場合は空文字列
+     */
+    static extractTitle(content: string): string {
+        const match = this.TITLE_PATTERN.exec(content);
+        return match ? match[1].trim() : '';
+    }
+
+    /**
+     * Markdownコンテンツからタイトル（H1見出し）を除いた本文を抽出する
+     * @param content Markdownコンテンツ
+     * @returns タイトルを除いた本文
+     */
+    static extractBodyWithoutTitle(content: string): string {
+        // H1見出し行を削除し、先頭の空行も削除
+        return content.replace(/^#\s+.+\n*/m, '').trim();
+    }
+
+    /**
+     * タイトルと本文からMarkdownコンテンツを生成する
+     * @param title タイトル
+     * @param body 本文
+     * @returns Markdownコンテンツ
+     */
+    static buildContentWithTitle(title: string, body: string): string {
+        if (!title) {
+            return body;
+        }
+        return `# ${title}\n\n${body}`;
+    }
 
     static detectTasksInContent(content: string): TaskMatch[] {
         const lines = content.split('\n');
@@ -165,6 +202,7 @@ export class PostodoNoteDetector {
                 const stickyNote: StickyNote = {
                     id: noteId,
                     filePath: filePath,
+                    title: '', // タスクノートにはタイトルなし
                     content: taskInfo.content,
                     position: {
                         x: 50 + (index % 5) * 220,
@@ -241,7 +279,8 @@ export class PostodoNoteDetector {
         console.log(`[DEBUG] Content preview:`, content.substring(0, 200));
         
         try {
-            const frontmatterMatch = content.match(/^---\n(.*?)\n---\n\n(.*)$/s);
+            // ES6互換: [\s\S]を使用して改行を含む任意の文字にマッチ
+            const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---\n\n([\s\S]*)$/);
             if (!frontmatterMatch) {
                 console.log(`[DEBUG] No frontmatter found in ${filePath}`);
                 return null;
@@ -344,9 +383,15 @@ export class PostodoNoteDetector {
 
             const id = frontmatter.postodo_id || this.generateIdFromPath(filePath);
 
+            // タイトルをH1見出しから抽出
+            const title = this.extractTitle(bodyContent || '');
+            // 本文からタイトル（H1見出し）を除去
+            const contentWithoutTitle = this.extractBodyWithoutTitle(bodyContent || '');
+
             const result = {
                 id,
-                content: bodyContent ? bodyContent.trim() : '',
+                title,
+                content: contentWithoutTitle,
                 completed: frontmatter.postodo_completed || false,
                 position: frontmatter.postodo_position,
                 dimensions: frontmatter.postodo_dimensions,
@@ -367,6 +412,7 @@ export class PostodoNoteDetector {
         return {
             id: data.id,
             filePath,
+            title: data.title,
             content: data.content,
             position: data.position || { x: 100, y: 100, zIndex: 1 },
             dimensions: data.dimensions || { width: 200, height: 180 },
@@ -433,17 +479,10 @@ export class PostodoNoteDetector {
         const frontmatter = this.toFrontmatter(note);
         console.log(`[DEBUG] Generated frontmatter:`, frontmatter);
         
-        let contentWithoutFrontmatter = originalContent;
-        const frontmatterMatch = originalContent.match(/^---\n.*?\n---\n\n/s);
-        if (frontmatterMatch) {
-            contentWithoutFrontmatter = originalContent.substring(frontmatterMatch[0].length);
-        }
-        
-        if (!contentWithoutFrontmatter.trim()) {
-            contentWithoutFrontmatter = note.content;
-        }
+        // タイトルと本文を結合してMarkdownコンテンツを生成
+        const bodyContent = this.buildContentWithTitle(note.title, note.content);
 
-        const finalContent = frontmatter + contentWithoutFrontmatter.trim();
+        const finalContent = frontmatter + bodyContent;
         console.log(`[DEBUG] Final content for ${note.id}:`, finalContent.substring(0, 200));
         return finalContent;
     }

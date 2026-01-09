@@ -260,6 +260,7 @@ export class DataManager implements IDataManager {
         return {
             id,
             filePath,
+            title: options.title || '',
             content: options.content,
             position: options.position || { x: 100, y: 100, zIndex: 1 },
             dimensions: options.dimensions || { width: 200, height: 180 },

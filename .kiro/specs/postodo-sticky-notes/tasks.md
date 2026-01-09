@@ -11,15 +11,15 @@
 
 ## タスク
 
-- [ ] 1. データモデルの拡張
-  - [ ] 1.1 StickyNote エンティティにタイトルフィールドを追加
+- [x] 1. データモデルの拡張
+  - [x] 1.1 StickyNote エンティティにタイトルフィールドを追加
     - `src/types/core-types.ts` の StickyNote インターフェースに `title: string` を追加
     - _Requirements: 2.5, 2.6_
-  - [ ] 1.2 PostodoNoteDetector のタイトル対応
+  - [x] 1.2 PostodoNoteDetector のタイトル対応
     - `src/utils/postodo-note-detector.ts` でタイトルの抽出・更新ロジックを追加
     - Markdown の H1 見出しをタイトルとして扱う
     - _Requirements: 2.5, 2.6_
-  - [ ] 1.3 プロパティテスト: タイトルと本文の独立編集
+  - [x] 1.3 プロパティテスト: タイトルと本文の独立編集
     - **Property 4: タイトル変更時のファイル名同期**
     - **Validates: Requirements 2.5**
 

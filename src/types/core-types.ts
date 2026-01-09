@@ -13,6 +13,7 @@ export interface Dimensions {
 export interface StickyNote {
     readonly id: string;
     readonly filePath: string;
+    title: string;
     content: string;
     position: Position;
     dimensions: Dimensions;
@@ -49,6 +50,7 @@ export type NoteColor = 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purpl
 export type NoteSize = 'small' | 'medium' | 'large';
 
 export interface CreateNoteOptions {
+    title?: string;
     content: string;
     position?: Position;
     dimensions?: Dimensions;
@@ -57,6 +59,7 @@ export interface CreateNoteOptions {
 }
 
 export interface UpdateNoteOptions {
+    title?: string;
     content?: string;
     position?: Position;
     dimensions?: Dimensions;
