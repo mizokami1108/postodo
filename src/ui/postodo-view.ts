@@ -8,6 +8,7 @@ import { FeedbackSystem } from './feedback-system';
 import { NoteValidator } from '../utils/validators';
 import { ErrorHandler, PostodoError } from '../utils/error-handler';
 import { IEventBus } from '../core/event-bus';
+import { PostodoNoteDetector } from '../utils/postodo-note-detector';
 
 export class PostodoView extends ItemView {
     private dataManager: DataManager;
@@ -18,6 +19,7 @@ export class PostodoView extends ItemView {
     private feedbackSystem!: FeedbackSystem;
     private errorHandler: ErrorHandler;
     private lastDragEndTime = 0;
+    // 完了済み付箋は常に非表示
 
     constructor(leaf: WorkspaceLeaf, private container: DIContainer) {
         super(leaf);
@@ -88,20 +90,14 @@ export class PostodoView extends ItemView {
             cls: 'postodo-add-btn'
         });
 
-        // クリアボタン
-        const clearBtn = controlsEl.createEl('button', {
-            text: 'Clear All',
-            cls: 'postodo-clear-btn'
-        });
-
         // キャンバス
         this.canvasEl = mainContainer.createEl('div', { cls: 'postodo-canvas' });
 
         // イベントリスナーの設定
-        this.setupUIEventListeners(addBtn, clearBtn);
+        this.setupUIEventListeners(addBtn);
     }
 
-    private setupUIEventListeners(addBtn: HTMLButtonElement, clearBtn: HTMLButtonElement): void {
+    private setupUIEventListeners(addBtn: HTMLButtonElement): void {
         // 追加ボタン
         addBtn.addEventListener('click', async () => {
             await this.createNote();
@@ -112,11 +108,6 @@ export class PostodoView extends ItemView {
             if (e.key === 'Enter') {
                 await this.createNote();
             }
-        });
-
-        // クリアボタン
-        clearBtn.addEventListener('click', async () => {
-            await this.clearAllNotes();
         });
 
         // キャンバスクリック（ドラッグ直後のクリックは無視）
@@ -140,10 +131,45 @@ export class PostodoView extends ItemView {
         });
 
         this.dataManager.onNoteUpdated((note) => {
-            this.updateNoteElement(note);
+            console.log(`[DEBUG] PostodoView: Note updated event for ${note.id}, completed: ${note.completed}`);
+            
+            // 編集中の場合は外部変更を無視
+            if (this.dataManager.isNoteBeingEdited(note.id)) {
+                console.log(`[DEBUG] PostodoView: Note ${note.id} is being edited, ignoring external update`);
+                return;
+            }
+            
+            // ローカルの状態を更新
+            const noteIndex = this.notes.findIndex(n => n.id === note.id);
+            if (noteIndex !== -1) {
+                this.notes[noteIndex] = note;
+            } else {
+                this.notes.push(note);
+            }
+            
+            // 完了状態に応じて表示を更新
+            if (note.completed) {
+                // 完了済みの場合は非表示にする
+                console.log(`[DEBUG] PostodoView: Hiding completed note ${note.id}`);
+                this.hideNoteElement(note.id);
+            } else {
+                // 未完了の場合は表示または更新
+                const existingElement = this.canvasEl.querySelector(`[data-note-id="${note.id}"]`);
+                if (existingElement) {
+                    // 既に表示されている場合は更新
+                    console.log(`[DEBUG] PostodoView: Updating existing note ${note.id}`);
+                    this.updateNoteElement(note);
+                } else {
+                    // 表示されていない場合は新しく描画
+                    console.log(`[DEBUG] PostodoView: Rendering uncompleted note ${note.id}`);
+                    this.renderNote(note);
+                }
+            }
         });
 
         this.dataManager.onNoteDeleted((id) => {
+            console.log(`[DEBUG] PostodoView: Note deleted event for ${id}`);
+            this.notes = this.notes.filter(n => n.id !== id);
             this.removeNoteElement(id);
         });
 
@@ -182,10 +208,14 @@ export class PostodoView extends ItemView {
     }
 
     private async loadNotes(): Promise<void> {
+        console.log('[DEBUG] PostodoView: Loading notes...');
         const result = await this.dataManager.getAllNotes();
         if (result.success) {
+            console.log(`[DEBUG] PostodoView: Loaded ${result.data.length} notes`);
             this.notes = result.data;
             this.renderAllNotes();
+        } else {
+            console.error('[DEBUG] PostodoView: Failed to load notes:', result.error);
         }
     }
 
@@ -215,6 +245,8 @@ export class PostodoView extends ItemView {
         if (result.success) {
             this.inputEl.value = '';
             this.notes.push(result.data);
+            // 付箋をキャンバスに描画（強制描画）
+            this.renderNote(result.data, true);
             // アニメーションのみ実行
             this.feedbackSystem?.showNoteCreated(result.data);
             // 通知を一度だけ表示
@@ -232,6 +264,8 @@ export class PostodoView extends ItemView {
 
         if (result.success) {
             this.notes.push(result.data);
+            // 付箋をキャンバスに描画（強制描画）
+            this.renderNote(result.data, true);
             // アニメーションのみ実行
             this.feedbackSystem?.showNoteCreated(result.data);
             // 通知を一度だけ表示
@@ -241,32 +275,94 @@ export class PostodoView extends ItemView {
         }
     }
 
-    private async clearAllNotes(): Promise<void> {
-        const noteCount = this.notes.length;
+    private async toggleNoteCompletion(noteId: string): Promise<void> {
+        const note = this.notes.find(n => n.id === noteId);
+        if (!note) return;
+
+        const newCompleted = !note.completed;
         
-        for (const note of this.notes) {
-            await this.dataManager.deleteNote(note.id);
-        }
+        const result = await this.dataManager.updateNote(noteId, { completed: newCompleted });
         
-        this.notes = [];
-        this.canvasEl.empty();
-        
-        // 一括削除の場合は一つの通知のみ
-        if (noteCount > 0) {
-            this.feedbackSystem?.showSuccess(`${noteCount}個の付箋を削除しました`);
+        if (result.success) {
+            // ローカルの状態を更新
+            const noteIndex = this.notes.findIndex(n => n.id === noteId);
+            if (noteIndex !== -1) {
+                this.notes[noteIndex] = { ...this.notes[noteIndex], completed: newCompleted };
+                
+                // 完了状態に応じて付箋の表示を更新
+                if (newCompleted) {
+                    // 完了済み付箋は常に非表示にする
+                    this.hideNoteElement(noteId);
+                } else {
+                    // 未完了に戻した場合は表示または更新
+                    const existingElement = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`);
+                    if (existingElement) {
+                        // 既に表示されている場合は更新
+                        this.updateNoteElement(this.notes[noteIndex]);
+                    } else {
+                        // 表示されていない場合は新しく描画
+                        this.renderNote(this.notes[noteIndex]);
+                    }
+                }
+            }
+            
+            // 通知を表示
+            const statusText = newCompleted ? '完了' : '未完了';
+            this.feedbackSystem?.showSuccess(`付箋を${statusText}にしました`);
+        } else {
+            this.handleError(result.error, 'toggleNoteCompletion');
         }
     }
 
+
     private renderAllNotes(): void {
+        console.log(`[DEBUG] PostodoView: Rendering ${this.notes.length} notes`);
         this.canvasEl.empty();
-        this.notes.forEach(note => {
+        
+        // 全てのドラッグハンドラーをクリーンアップ
+        this.dragHandlers.forEach(handler => handler.cleanup());
+        this.dragHandlers.clear();
+        
+        // 完了済み付箋は常に非表示にする
+        const notesToShow = this.notes.filter(note => !note.completed);
+        console.log(`[DEBUG] PostodoView: Showing ${notesToShow.length} non-completed notes`);
+        
+        notesToShow.forEach(note => {
             this.renderNote(note);
         });
     }
 
-    private renderNote(note: StickyNote): void {
+    private renderNote(note: StickyNote, forceRender: boolean = false): void {
+        const existingEl = this.canvasEl.querySelector(`[data-note-id="${note.id}"]`);
+        
+        if (existingEl && !forceRender) {
+            // 強制描画でない場合は更新のみ
+            console.log(`[DEBUG] Note ${note.id} already rendered, updating instead`);
+            this.updateNoteElement(note);
+            return;
+        } else if (existingEl && forceRender) {
+            // 強制描画の場合は既存要素を削除してから新規作成
+            console.log(`[DEBUG] Force rendering note ${note.id}, removing existing element`);
+            this.removeNoteElement(note.id);
+        }
+
+        // 必要なプロパティのバリデーション
+        if (!note.position || typeof note.position.x !== 'number' || typeof note.position.y !== 'number') {
+            console.error('Cannot render note with invalid position:', note.position, 'for note:', note.id);
+            return;
+        }
+        if (!note.dimensions || typeof note.dimensions.width !== 'number' || typeof note.dimensions.height !== 'number') {
+            console.error('Cannot render note with invalid dimensions:', note.dimensions, 'for note:', note.id);
+            return;
+        }
+        if (!note.appearance || !note.appearance.color) {
+            console.error('Cannot render note with invalid appearance:', note.appearance, 'for note:', note.id);
+            return;
+        }
+
+        const isTaskNote = PostodoNoteDetector.isTaskNote(note);
         const noteEl = this.canvasEl.createEl('div', {
-            cls: 'sticky-note',
+            cls: `sticky-note ${note.completed ? 'completed' : 'pending'} ${isTaskNote ? 'task-note' : 'regular-note'}`,
             attr: {
                 'data-note-id': note.id
             }
@@ -281,28 +377,104 @@ export class PostodoView extends ItemView {
         noteEl.style.backgroundColor = this.getColorValue(note.appearance.color);
         noteEl.style.zIndex = note.position.zIndex.toString();
 
+        // タスクノートの場合は特別なスタイル
+        if (isTaskNote) {
+            noteEl.style.border = '2px solid #4CAF50';
+            noteEl.style.borderRadius = '8px';
+        }
+
+        // 完了状態の場合は透明度を下げる
+        if (note.completed) {
+            noteEl.style.opacity = '0.6';
+        }
+
+        // タスクヘッダー（タスクノートの場合のみ）
+        if (isTaskNote) {
+            this.createTaskHeader(noteEl, note);
+        }
+
         // コンテンツ
         const contentEl = noteEl.createEl('div', {
-            cls: 'note-content',
-            text: note.content
+            cls: isTaskNote ? 'task-content' : 'note-content'
         });
+        
+        // タスクノートの場合はフォーマット済みコンテンツを使用
+        const displayContent = isTaskNote ? PostodoNoteDetector.formatTaskContent(note) : note.content;
+        contentEl.textContent = displayContent;
 
-        // 削除ボタン
-        const deleteBtn = noteEl.createEl('button', {
-            cls: 'note-delete-btn',
-            text: '×'
+        // 完了状態の場合は取り消し線を追加
+        if (note.completed) {
+            contentEl.style.textDecoration = 'line-through';
+        }
+
+        // チェックボックス
+        const checkboxEl = noteEl.createEl('input', {
+            type: 'checkbox',
+            cls: isTaskNote ? 'task-checkbox' : 'note-checkbox'
         });
+        checkboxEl.checked = note.completed;
+        checkboxEl.title = note.completed ? '完了済み' : '未完了';
 
         // イベントリスナー
-        this.setupNoteEventListeners(noteEl, note, contentEl, deleteBtn);
+        this.setupNoteEventListeners(noteEl, note, contentEl, checkboxEl);
+    }
+
+    private createTaskHeader(noteEl: HTMLElement, note: StickyNote): void {
+        const taskInfo = note.metadata.taskInfo;
+        if (!taskInfo) return;
+
+        const headerEl = noteEl.createEl('div', { cls: 'task-header' });
+        
+        // 優先度インジケーター
+        if (taskInfo.priority) {
+            const priorityEl = headerEl.createEl('span', { cls: `task-priority priority-${taskInfo.priority}` });
+            const priorityEmoji = {
+                'highest': '⏫',
+                'high': '🔼',
+                'low': '🔽'
+            }[taskInfo.priority];
+            priorityEl.textContent = priorityEmoji;
+            priorityEl.title = `優先度: ${taskInfo.priority}`;
+        }
+
+        // 期日インジケーター
+        if (taskInfo.dueDate) {
+            const dueDateEl = headerEl.createEl('span', { cls: 'task-due-date' });
+            dueDateEl.textContent = `📅 ${taskInfo.dueDate}`;
+            dueDateEl.title = `期日: ${taskInfo.dueDate}`;
+            
+            // 期日が近い場合は警告色
+            const dueDate = new Date(taskInfo.dueDate);
+            const today = new Date();
+            const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+            
+            if (diffDays <= 0) {
+                dueDateEl.classList.add('overdue');
+            } else if (diffDays <= 3) {
+                dueDateEl.classList.add('due-soon');
+            }
+        }
+
+        // 繰り返しインジケーター
+        if (taskInfo.recurrence) {
+            const recurrenceEl = headerEl.createEl('span', { cls: 'task-recurrence' });
+            recurrenceEl.textContent = `🔁 ${taskInfo.recurrence}`;
+            recurrenceEl.title = `繰り返し: ${taskInfo.recurrence}`;
+        }
     }
 
     private setupNoteEventListeners(
         noteEl: HTMLElement,
         note: StickyNote,
         contentEl: HTMLElement,
-        deleteBtn: HTMLButtonElement
+        checkboxEl: HTMLInputElement
     ): void {
+        // 既存のドラッグハンドラーをクリーンアップ
+        const existingHandler = this.dragHandlers.get(note.id);
+        if (existingHandler) {
+            existingHandler.cleanup();
+        }
+
         // シンプルドラッグハンドラーの設定
         const dragHandler = new SimpleDragHandler(this.dataManager);
         dragHandler.setupDragHandlers(noteEl, note, this.canvasEl, (timestamp) => {
@@ -312,16 +484,30 @@ export class PostodoView extends ItemView {
 
         // 編集機能
         contentEl.addEventListener('dblclick', () => {
-            this.editNote(note, contentEl);
+            console.log(`[DEBUG] PostodoView: Double-click edit triggered for note ${note.id}`);
+            // 現在の付箋状態を取得
+            const currentNote = this.notes.find(n => n.id === note.id);
+            if (!currentNote) {
+                console.log(`[DEBUG] PostodoView: Note ${note.id} not found in local notes`);
+                return;
+            }
+            
+            this.editNote(currentNote, contentEl);
         });
 
-        // 削除機能
-        deleteBtn.addEventListener('click', async () => {
-            await this.deleteNote(note.id);
+        // 完了状態切り替え機能
+        checkboxEl.addEventListener('change', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            await this.toggleNoteCompletion(note.id);
         });
     }
 
     private editNote(note: StickyNote, contentEl: HTMLElement): void {
+        console.log(`[DEBUG] PostodoView: Starting edit for note ${note.id}, content: "${note.content}"`);
+        // 編集状態を設定
+        this.dataManager.setNoteEditing(note.id, true);
+        
         const input = document.createElement('textarea');
         input.value = note.content;
         input.style.width = '100%';
@@ -335,6 +521,7 @@ export class PostodoView extends ItemView {
         
         const saveEdit = async () => {
             const newContent = input.value.trim();
+            console.log(`[DEBUG] PostodoView: Saving edit for note ${note.id}: "${note.content}" -> "${newContent}"`);
             
             // バリデーション
             const validation = NoteValidator.validateContent(newContent);
@@ -343,14 +530,7 @@ export class PostodoView extends ItemView {
                 return;
             }
             
-            if (newContent !== note.content) {
-                const result = await this.dataManager.updateNote(note.id, { content: newContent });
-                if (!result.success) {
-                    this.handleError(result.error, 'updateNote');
-                    return;
-                }
-            }
-            
+            // UI更新を先に実行
             const newContentEl = document.createElement('div');
             newContentEl.className = 'note-content';
             newContentEl.textContent = newContent;
@@ -360,55 +540,143 @@ export class PostodoView extends ItemView {
             newContentEl.addEventListener('dblclick', () => {
                 this.editNote({ ...note, content: newContent }, newContentEl);
             });
+            
+            // ローカル状態を先に更新
+            const noteIndex = this.notes.findIndex(n => n.id === note.id);
+            if (noteIndex !== -1) {
+                this.notes[noteIndex] = { ...this.notes[noteIndex], content: newContent };
+            }
+            
+            // 内容が変わった場合のみデータ保存
+            if (newContent !== note.content) {
+                try {
+                    const result = await this.dataManager.updateNote(note.id, { content: newContent });
+                    if (!result.success) {
+                        this.handleError(result.error, 'updateNote');
+                        // 保存失敗時は元に戻す
+                        newContentEl.textContent = note.content;
+                        if (noteIndex !== -1) {
+                            this.notes[noteIndex] = { ...this.notes[noteIndex], content: note.content };
+                        }
+                    }
+                } catch (error) {
+                    console.error('Save edit error:', error);
+                    this.handleError(error as Error, 'saveEdit');
+                }
+            }
+            
+            // 最後に編集状態を解除
+            this.dataManager.setNoteEditing(note.id, false);
+        };
+        
+        const cancelEdit = () => {
+            // 編集状態を解除
+            this.dataManager.setNoteEditing(note.id, false);
+            
+            const newContentEl = document.createElement('div');
+            newContentEl.className = 'note-content';
+            newContentEl.textContent = note.content;
+            input.replaceWith(newContentEl);
+            
+            // 新しい要素にイベントリスナーを再設定
+            newContentEl.addEventListener('dblclick', () => {
+                this.editNote(note, newContentEl);
+            });
         };
         
         input.addEventListener('blur', saveEdit);
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && e.ctrlKey) {
                 saveEdit();
+            } else if (e.key === 'Escape') {
+                cancelEdit();
             }
         });
     }
 
-    private async deleteNote(noteId: string): Promise<void> {
-        // ドラッグハンドラーのクリーンアップ
-        const dragHandler = this.dragHandlers.get(noteId);
-        if (dragHandler) {
-            dragHandler.cleanup();
-            this.dragHandlers.delete(noteId);
-        }
-        
-        const result = await this.dataManager.deleteNote(noteId);
-        if (result.success) {
-            this.notes = this.notes.filter(note => note.id !== noteId);
-            // アニメーションのみ実行
-            this.feedbackSystem?.showNoteDeleted(noteId);
-            // 通知を一度だけ表示
-            this.feedbackSystem?.showSuccess('付箋を削除しました');
-        } else {
-            this.handleError(result.error, 'deleteNote');
-        }
-    }
 
     private updateNoteElement(note: StickyNote): void {
         const noteEl = this.canvasEl.querySelector(`[data-note-id="${note.id}"]`) as HTMLElement;
         if (!noteEl) return;
 
+        // 位置とサイズのバリデーション
+        if (!note.position || typeof note.position.x !== 'number' || typeof note.position.y !== 'number') {
+            console.error('Invalid note position:', note.position, 'for note:', note.id);
+            return;
+        }
+
         // 位置の更新
         noteEl.style.left = `${note.position.x}px`;
         noteEl.style.top = `${note.position.y}px`;
 
+        const isTaskNote = PostodoNoteDetector.isTaskNote(note);
+        
         // コンテンツの更新
-        const contentEl = noteEl.querySelector('.note-content') as HTMLElement;
+        const contentEl = noteEl.querySelector('.note-content, .task-content') as HTMLElement;
         if (contentEl) {
-            contentEl.textContent = note.content;
+            const displayContent = isTaskNote ? PostodoNoteDetector.formatTaskContent(note) : note.content;
+            contentEl.textContent = displayContent;
         }
+
+        // 完了状態に応じてスタイルを更新
+        noteEl.className = `sticky-note ${note.completed ? 'completed' : 'pending'} ${isTaskNote ? 'task-note' : 'regular-note'}`;
+        
+        if (note.completed) {
+            noteEl.style.opacity = '0.6';
+            if (contentEl) {
+                contentEl.style.textDecoration = 'line-through';
+            }
+        } else {
+            noteEl.style.opacity = '1';
+            if (contentEl) {
+                contentEl.style.textDecoration = 'none';
+            }
+        }
+
+        // チェックボックスの更新
+        const checkboxEl = noteEl.querySelector('.note-checkbox, .task-checkbox') as HTMLInputElement;
+        if (checkboxEl) {
+            checkboxEl.checked = note.completed;
+            checkboxEl.title = note.completed ? '完了済み' : '未完了';
+        }
+
+        // タスクヘッダーの更新（タスクノートの場合）
+        if (isTaskNote) {
+            const headerEl = noteEl.querySelector('.task-header');
+            if (headerEl) {
+                headerEl.remove();
+            }
+            this.createTaskHeader(noteEl, note);
+        }
+
+        // イベントリスナーは初回レンダリング時のみ設定、更新時は再設定しない
+        console.log(`[DEBUG] PostodoView: Updated note element ${note.id} without resetting event listeners`);
     }
 
     private removeNoteElement(noteId: string): void {
         const noteEl = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`);
         if (noteEl) {
             noteEl.remove();
+        }
+    }
+
+    private hideNoteElement(noteId: string): void {
+        const noteEl = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`) as HTMLElement;
+        if (noteEl) {
+            // フェードアウトアニメーション
+            noteEl.style.transition = 'opacity 0.3s ease';
+            noteEl.style.opacity = '0';
+            
+            setTimeout(() => {
+                noteEl.remove();
+                
+                // ドラッグハンドラーのクリーンアップ
+                const dragHandler = this.dragHandlers.get(noteId);
+                if (dragHandler) {
+                    dragHandler.cleanup();
+                    this.dragHandlers.delete(noteId);
+                }
+            }, 300);
         }
     }
 
@@ -513,9 +781,6 @@ export class PostodoView extends ItemView {
     }
 
     private handleExternalModification(noteId: string, newNote: StickyNote): void {
-        // 外部からの変更を UI に反映
-        this.updateNoteElement(newNote);
-        
         // 通知
         this.feedbackSystem?.showWarning('付箋が外部で変更されました');
         
@@ -523,6 +788,22 @@ export class PostodoView extends ItemView {
         const noteIndex = this.notes.findIndex(note => note.id === noteId);
         if (noteIndex !== -1) {
             this.notes[noteIndex] = newNote;
+        }
+        
+        // 完了状態に応じて表示を更新
+        if (newNote.completed) {
+            // 完了済みの場合は非表示にする
+            this.hideNoteElement(noteId);
+        } else {
+            // 未完了の場合は表示または更新
+            const existingElement = this.canvasEl.querySelector(`[data-note-id="${noteId}"]`);
+            if (existingElement) {
+                // 既に表示されている場合は更新
+                this.updateNoteElement(newNote);
+            } else {
+                // 表示されていない場合は新しく描画
+                this.renderNote(newNote);
+            }
         }
     }
 

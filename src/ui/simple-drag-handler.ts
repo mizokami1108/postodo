@@ -27,8 +27,10 @@ export class SimpleDragHandler {
     }
 
     private handleMouseDown = (e: MouseEvent): void => {
-        // 削除ボタンクリック時はドラッグを開始しない
-        if ((e.target as HTMLElement).classList.contains('note-delete-btn')) {
+        // 削除ボタンや完了ボタン、チェックボックスクリック時はドラッグを開始しない
+        if ((e.target as HTMLElement).classList.contains('note-delete-btn') || 
+            (e.target as HTMLElement).classList.contains('note-complete-btn') ||
+            (e.target as HTMLElement).classList.contains('note-checkbox')) {
             return;
         }
 

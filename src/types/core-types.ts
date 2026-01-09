@@ -18,6 +18,7 @@ export interface StickyNote {
     dimensions: Dimensions;
     appearance: Appearance;
     metadata: NoteMetadata;
+    completed: boolean;
 }
 
 export interface Appearance {
@@ -26,12 +27,22 @@ export interface Appearance {
     rotation: number;
 }
 
+export interface TaskInfo {
+    dueDate?: string;
+    scheduledDate?: string;
+    startDate?: string;
+    recurrence?: string;
+    priority?: 'highest' | 'high' | 'low';
+    lineNumber?: number;
+}
+
 export interface NoteMetadata {
     created: string;
     modified: string;
     tags: string[];
     links: string[];
     attachments: string[];
+    taskInfo?: TaskInfo;
 }
 
 export type NoteColor = 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple';
@@ -42,6 +53,7 @@ export interface CreateNoteOptions {
     position?: Position;
     dimensions?: Dimensions;
     appearance?: Partial<Appearance>;
+    completed?: boolean;
 }
 
 export interface UpdateNoteOptions {
@@ -49,6 +61,7 @@ export interface UpdateNoteOptions {
     position?: Position;
     dimensions?: Dimensions;
     appearance?: Partial<Appearance>;
+    completed?: boolean;
 }
 
 // イベント型

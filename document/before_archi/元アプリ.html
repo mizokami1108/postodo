@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compact RSS Reader</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1a202c;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .controls {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .rss-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .rss-input:focus {
+            outline: none;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.1);
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            background: #2c5aa0;
+        }
+
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #4a5568;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            min-width: fit-content;
+        }
+
+        .tab:hover {
+            background: #edf2f7;
+        }
+
+        .tab.active {
+            background: #3182ce;
+            color: white;
+            border-color: #3182ce;
+        }
+
+        .tab-title {
+            font-weight: 500;
+        }
+
+        .tab-count {
+            background: rgba(255,255,255,0.2);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .tab.active .tab-count {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .tab:not(.active) .tab-count {
+            background: #e2e8f0;
+            color: #718096;
+        }
+
+        .close-tab {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            font-size: 12px;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-tab:hover {
+            background: rgba(255,255,255,0.4);
+        }
+
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .article-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: #3182ce;
+        }
+
+        .article-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: #f7fafc;
+        }
+
+        .article-content {
+            padding: 16px;
+        }
+
+        .article-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .article-title a {
+            color: #2d3748;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .article-title a:hover {
+            color: #3182ce;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .article-description {
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #3182ce;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .message.success {
+            background: #c6f6d5;
+            color: #2f855a;
+            border: 1px solid #9ae6b4;
+        }
+
+        .message.error {
+            background: #fed7d7;
+            color: #c53030;
+            border: 1px solid #feb2b2;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .rss-input {
+                min-width: auto;
+            }
+
+            .tabs {
+                padding: 4px;
+            }
+
+            .tab {
+                padding: 6px 10px;
+                font-size: 13px;
+            }
+        }
+
+        .btn-auto {
+            background: #9f7aea;
+        }
+
+        .btn-auto:hover {
+            background: #805ad5;
+        }
+
+        /* オートビューアー用のスタイル */
+        .auto-viewer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+        }
+
+        .auto-viewer.active {
+            display: flex;
+        }
+
+        .auto-header {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .auto-title {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .auto-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .auto-refresh-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 40px;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #9f7aea;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(20px);
+        }
+
+        .auto-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .auto-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .auto-btn.active {
+            background: #9f7aea;
+            border-color: #9f7aea;
+        }
+
+        .speed-selector {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .auto-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .auto-article {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .auto-article.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .auto-article-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #718096;
+        }
+
+        .auto-article-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .auto-article-description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .auto-article-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #3182ce;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .auto-article-link:hover {
+            color: #2c5aa0;
+        }
+
+        .auto-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #9f7aea 0%, #667eea 100%);
+            transition: width linear;
+            border-radius: 0 2px 0 0;
+        }
+
+        .auto-footer {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .auto-progress-text {
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .auto-navigation {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auto-refresh-status {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            text-align: center;
+            z-index: 1001;
+            display: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .auto-refresh-status.active {
+            display: block;
+        }
+
+        .refresh-spinner {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #9f7aea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 10px;
+        }
+
+        .auto-completion-notice {
+            background: linear-gradient(135deg, #9f7aea 0%, #667eea 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .auto-content {
+                padding: 20px;
+            }
+
+            .auto-article {
+                padding: 25px;
+            }
+
+            .auto-article-title {
+                font-size: 1.5rem;
+            }
+
+            .auto-header, .auto-footer {
+                padding: 12px 15px;
+            }
+
+            .auto-controls {
+                gap: 5px;
+                flex-wrap: wrap;
+            }
+
+            .auto-btn {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+
+            .auto-refresh-toggle {
+                font-size: 12px;
+            }
+
+            .toggle-switch {
+                width: 35px;
+                height: 18px;
+            }
+
+            .toggle-slider {
+                width: 14px;
+                height: 14px;
+            }
+
+            .toggle-switch.active .toggle-slider {
+                transform: translateX(17px);
+            }
+        }
+
+        @media (min-width: 1200px) {
+            .articles-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📰 Compact RSS Reader</h1>
+            <p>コンパクトで美しいRSSリーダー（Static版）</p>
+        </div>
+
+        <div class="controls">
+            <div class="input-group">
+                <input type="url" id="rssUrl" class="rss-input" placeholder="RSSフィードのURLを入力..." 
+                       value="https://qiita.com/tags/javascript/feed">
+                <button onclick="addFeed()" class="btn" id="addBtn">追加</button>
+                <button onclick="refreshCurrentFeed()" class="btn" id="refreshBtn">更新</button>
+                <button onclick="refreshAllFeeds()" class="btn" id="refreshAllBtn">全更新</button>
+                <button onclick="startAutoViewer()" class="btn btn-auto" id="autoBtn">🎬 オートビュー</button>
+            </div>
+            <div id="message"></div>
+        </div>
+
+        <div class="stats" id="stats">
+            <span>フィード: 0</span>
+            <span>記事: 0</span>
+        </div>
+
+        <div class="tabs" id="tabs">
+            <div class="tab active" onclick="showAllArticles()">
+                <span class="tab-title">🌐 すべて</span>
+                <span class="tab-count">0</span>
+            </div>
+        </div>
+
+        <div class="articles-grid" id="articlesGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                RSSフィードを追加して記事を読み始めましょう
+            </div>
+        </div>
+    </div>
+
+    <!-- オートビューアー -->
+    <div class="auto-viewer" id="autoViewer">
+        <div class="auto-header">
+            <div class="auto-title">📰 Auto RSS Viewer</div>
+            <div class="auto-controls">
+                <div class="auto-refresh-toggle">
+                    <span>自動更新</span>
+                    <div class="toggle-switch active" id="autoRefreshToggle" onclick="toggleAutoRefresh()">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <button class="auto-btn" id="playPauseBtn" onclick="togglePlayPause()">⏸️ 一時停止</button>
+                <select class="speed-selector" id="speedSelector" onchange="changeSpeed()">
+                    <option value="8000">遅い (8秒)</option>
+                    <option value="5000" selected>普通 (5秒)</option>
+                    <option value="3000">速い (3秒)</option>
+                    <option value="2000">高速 (2秒)</option>
+                </select>
+                <button class="auto-btn" onclick="closeAutoViewer()">❌ 終了</button>
+            </div>
+        </div>
+
+        <div class="auto-content">
+            <div class="auto-article" id="autoArticle">
+                <div class="auto-article-meta">
+                    <span id="autoFeedTitle">フィード名</span>
+                    <span id="autoDate">2024/01/01</span>
+                </div>
+                <h2 class="auto-article-title" id="autoTitle">記事タイトル</h2>
+                <div class="auto-article-description" id="autoDescription">
+                    記事の内容がここに表示されます...
+                </div>
+                <a href="#" class="auto-article-link" id="autoLink" target="_blank">
+                    📖 記事を読む →
+                </a>
+            </div>
+
+            <!-- 更新状況表示 -->
+            <div class="auto-refresh-status" id="autoRefreshStatus">
+                <div class="refresh-spinner"></div>
+                <div id="refreshMessage">新しい記事を取得中...</div>
+            </div>
+        </div>
+
+        <div class="auto-footer">
+            <div class="auto-progress-text" id="progressText">1 / 10 記事</div>
+            <div class="auto-navigation">
+                <button class="auto-btn" onclick="previousArticle()">⏮️ 前へ</button>
+                <button class="auto-btn" onclick="nextArticle()">⏭️ 次へ</button>
+            </div>
+            <div class="auto-progress" id="autoProgress"></div>
+        </div>
+    </div>
+
+    <script>
+        // ローカルストレージベースのデータ管理
+        let feeds = JSON.parse(localStorage.getItem('rssFeeds')) || [];
+        let articles = JSON.parse(localStorage.getItem('rssArticles')) || [];
+        let currentFeedId = null;
+
+        // オートビューアー用の変数
+        let autoViewerActive = false;
+        let autoViewerInterval = null;
+        let currentAutoIndex = 0;
+        let autoArticles = [];
+        let isPlaying = true;
+        let currentSpeed = 5000;
+        let progressInterval = null;
+        let autoRefreshEnabled = true;
+        let isRefreshing = false;
+        let completedCycles = 0;
+
+        // 初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            renderTabs();
+            renderArticles();
+            updateStats();
+            
+            // 自動更新設定を読み込み
+            const savedAutoRefresh = localStorage.getItem('autoRefreshEnabled');
+            if (savedAutoRefresh !== null) {
+                autoRefreshEnabled = JSON.parse(savedAutoRefresh);
+            }
+            
+            // デフォルトフィードがない場合は追加
+            if (feeds.length === 0) {
+                const defaultFeeds = [
+                    'https://qiita.com/tags/javascript/feed',
+                    'https://zenn.dev/feed'
+                ];
+                
+                defaultFeeds.forEach(url => {
+                    addFeedInternal(url);
+                });
+            }
+            
+            // Enterキーでフィード追加
+            document.getElementById('rssUrl').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addFeed();
+                }
+            });
+        });
+
+        function showMessage(text, type = 'success') {
+            const messageDiv = document.getElementById('message');
+            messageDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        function setLoading(isLoading) {
+            const buttons = ['addBtn', 'refreshBtn', 'refreshAllBtn', 'autoBtn'];
+            buttons.forEach(id => {
+                document.getElementById(id).disabled = isLoading;
+            });
+        }
+
+        async function fetchRSSFeed(url) {
+            try {
+                // 複数のCORSプロキシを試行
+                const proxies = [
+                    `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`,
+                    `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+                    `https://corsproxy.io/?${encodeURIComponent(url)}`
+                ];
+
+                for (const proxyUrl of proxies) {
+                    try {
+                        const response = await fetch(proxyUrl);
+                        
+                        if (proxyUrl.includes('rss2json')) {
+                            const data = await response.json();
+                            if (data.status === 'ok') {
+                                return {
+                                    title: data.feed.title,
+                                    description: data.feed.description,
+                                    items: data.items.map(item => ({
+                                        title: item.title,
+                                        link: item.link,
+                                        description: item.description?.replace(/<[^>]*>/g, '').substring(0, 200) + '...',
+                                        pubDate: new Date(item.pubDate),
+                                        thumbnail: item.thumbnail
+                                    }))
+                                };
+                            }
+                        } else {
+                            const data = await response.json();
+                            const xmlText = data.contents;
+                            return parseRSSXML(xmlText);
+                        }
+                    } catch (error) {
+                        console.warn(`プロキシ ${proxyUrl} でエラー:`, error);
+                        continue;
+                    }
+                }
+                
+                throw new Error('すべてのプロキシで失敗しました');
+                
+            } catch (error) {
+                console.error('RSS取得エラー:', error);
+                throw error;
+            }
+        }
+
+        function parseRSSXML(xmlText) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(xmlText, 'text/xml');
+            
+            const title = doc.querySelector('channel > title')?.textContent || 'Unknown Feed';
+            const description = doc.querySelector('channel > description')?.textContent || '';
+            
+            const items = Array.from(doc.querySelectorAll('item')).map(item => {
+                const titleEl = item.querySelector('title');
+                const linkEl = item.querySelector('link');
+                const descEl = item.querySelector('description');
+                const pubDateEl = item.querySelector('pubDate');
+                
+                return {
+                    title: titleEl?.textContent || 'No Title',
+                    link: linkEl?.textContent || '',
+                    description: descEl?.textContent?.replace(/<[^>]*>/g, '').substring(0, 200) + '...' || '',
+                    pubDate: pubDateEl ? new Date(pubDateEl.textContent) : new Date(),
+                    thumbnail: null
+                };
+            });
+            
+            return { title, description, items };
+        }
+
+        async function addFeed() {
+            const urlInput = document.getElementById('rssUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                showMessage('URLを入力してください', 'error');
+                return;
+            }
+
+            await addFeedInternal(url);
+            urlInput.value = '';
+        }
+
+        async function addFeedInternal(url) {
+            if (feeds.some(feed => feed.url === url)) {
+                showMessage('このフィードは既に追加されています', 'error');
+                return;
+            }
+
+            setLoading(true);
+            
+            try {
+                const feedData = await fetchRSSFeed(url);
+                
+                const newFeed = {
+                    id: Date.now(),
+                    url: url,
+                    title: feedData.title,
+                    description: feedData.description,
+                    created_at: new Date().toISOString()
+                };
+                
+                feeds.push(newFeed);
+                localStorage.setItem('rssFeeds', JSON.stringify(feeds));
+                
+                // 記事を追加
+                const newArticles = feedData.items.map(item => ({
+                    ...item,
+                    id: Date.now() + Math.random(),
+                    feed_id: newFeed.id,
+                    feed_title: feedData.title,
+                    pubDate: item.pubDate.toISOString()
+                }));
+                
+                articles.push(...newArticles);
+                localStorage.setItem('rssArticles', JSON.stringify(articles));
+                
+                renderTabs();
+                renderArticles();
+                updateStats();
+                showMessage('フィードを追加しました');
+                
+            } catch (error) {
+                console.error('フィード追加エラー:', error);
+                showMessage('フィードの追加に失敗しました: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function removeFeed(feedId) {
+            feeds = feeds.filter(feed => feed.id !== feedId);
+            articles = articles.filter(article => article.feed_id !== feedId);
+            
+            localStorage.setItem('rssFeeds', JSON.stringify(feeds));
+            localStorage.setItem('rssArticles', JSON.stringify(articles));
+            
+            if (currentFeedId === feedId) {
+                currentFeedId = null;
+            }
+            
+            renderTabs();
+            renderArticles();
+            updateStats();
+            showMessage('フィードを削除しました');
+        }
+
+        async function refreshCurrentFeed() {
+            if (!currentFeedId) {
+                showMessage('フィードを選択してください', 'error');
+                return;
+            }
+            
+            const feed = feeds.find(f => f.id === currentFeedId);
+            if (feed) {
+                setLoading(true);
+                const oldCount = articles.filter(a => a.feed_id === currentFeedId).length;
+                
+                try {
+                    await refreshFeed(feed);
+                    const newCount = articles.filter(a => a.feed_id === currentFeedId).length;
+                    const addedArticles = newCount - oldCount;
+                    
+                    if (addedArticles > 0) {
+                        showMessage(`✨ ${feed.title} から ${addedArticles}件の新しい記事を取得しました！`);
+                    } else {
+                        showMessage(`${feed.title} を更新しました（新しい記事はありませんでした）`);
+                    }
+                } catch (error) {
+                    showMessage('フィードの更新に失敗しました', 'error');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        }
+
+        async function refreshAllFeeds() {
+            setLoading(true);
+            showLoading();
+            
+            const oldArticleCount = articles.length;
+            
+            try {
+                for (const feed of feeds) {
+                    await refreshFeed(feed);
+                }
+                
+                const newArticleCount = articles.length;
+                const addedArticles = newArticleCount - oldArticleCount;
+                
+                if (addedArticles > 0) {
+                    showMessage(`✨ ${addedArticles}件の新しい記事を取得しました！`);
+                    
+                    // 新記事通知を表示
+                    const notice = document.createElement('div');
+                    notice.className = 'auto-completion-notice';
+                    notice.textContent = `🎉 ${addedArticles}件の新しい記事を発見！`;
+                    document.querySelector('.controls').appendChild(notice);
+                    
+                    setTimeout(() => {
+                        notice.remove();
+                    }, 5000);
+                } else {
+                    showMessage('すべてのフィードを更新しました（新しい記事はありませんでした）');
+                }
+            } catch (error) {
+                showMessage('フィードの更新に失敗しました', 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function refreshFeed(feed) {
+            try {
+                const feedData = await fetchRSSFeed(feed.url);
+                
+                // フィード情報を更新
+                feed.title = feedData.title;
+                feed.description = feedData.description;
+                
+                // 既存の記事を削除
+                articles = articles.filter(article => article.feed_id !== feed.id);
+                
+                // 新しい記事を追加
+                const newArticles = feedData.items.map(item => ({
+                    ...item,
+                    id: Date.now() + Math.random(),
+                    feed_id: feed.id,
+                    feed_title: feedData.title,
+                    pubDate: item.pubDate.toISOString()
+                }));
+                
+                articles.push(...newArticles);
+                
+                // ローカルストレージに保存
+                localStorage.setItem('rssFeeds', JSON.stringify(feeds));
+                localStorage.setItem('rssArticles', JSON.stringify(articles));
+                
+                renderTabs();
+                renderArticles();
+                updateStats();
+                
+            } catch (error) {
+                console.error(`フィード更新エラー (${feed.url}):`, error);
+                throw error;
+            }
+        }
+
+        function renderTabs() {
+            const tabsContainer = document.getElementById('tabs');
+            const allCount = currentFeedId === null ? articles.length : articles.length;
+            
+            const allTab = `
+                <div class="tab ${currentFeedId === null ? 'active' : ''}" onclick="showAllArticles()">
+                    <span class="tab-title">🌐 すべて</span>
+                    <span class="tab-count">${articles.length}</span>
+                </div>
+            `;
+
+            const feedTabs = feeds.map(feed => {
+                const feedArticleCount = articles.filter(a => a.feed_id === feed.id).length;
+                return `
+                    <div class="tab ${currentFeedId === feed.id ? 'active' : ''}" onclick="showFeedArticles(${feed.id})">
+                        <span class="tab-title">${feed.title || 'Untitled'}</span>
+                        <span class="tab-count">${feedArticleCount}</span>
+                        <button class="close-tab" onclick="event.stopPropagation(); removeFeed(${feed.id})">×</button>
+                    </div>
+                `;
+            }).join('');
+
+            tabsContainer.innerHTML = allTab + feedTabs;
+        }
+
+        function renderArticles() {
+            const grid = document.getElementById('articlesGrid');
+            
+            let displayArticles = articles;
+            if (currentFeedId !== null) {
+                displayArticles = articles.filter(a => a.feed_id === currentFeedId);
+            }
+            
+            // 日付順にソート
+            displayArticles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+            
+            if (displayArticles.length === 0) {
+                grid.innerHTML = '<div class="loading">記事がありません</div>';
+                return;
+            }
+
+            grid.innerHTML = displayArticles.map(article => `
+                <div class="article-card">
+                    ${article.thumbnail ? `<img src="${article.thumbnail}" alt="" class="article-image" onerror="this.style.display='none'">` : ''}
+                    <div class="article-content">
+                        <div class="article-title">
+                            <a href="${article.link}" target="_blank">${article.title}</a>
+                        </div>
+                        <div class="article-meta">
+                            <span>📰 ${article.feed_title}</span>
+                            <span>${new Date(article.pubDate).toLocaleDateString('ja-JP')}</span>
+                        </div>
+                        <div class="article-description">${article.description}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showAllArticles() {
+            currentFeedId = null;
+            renderTabs();
+            renderArticles();
+        }
+
+        function showFeedArticles(feedId) {
+            currentFeedId = feedId;
+            renderTabs();
+            renderArticles();
+        }
+
+        function showLoading() {
+            document.getElementById('articlesGrid').innerHTML = '<div class="loading"><div class="spinner"></div>更新中...</div>';
+        }
+
+        function updateStats() {
+            const statsDiv = document.getElementById('stats');
+            const totalArticles = articles.length;
+            const totalFeeds = feeds.length;
+            statsDiv.innerHTML = `
+                <span>フィード: ${totalFeeds}</span>
+                <span>記事: ${totalArticles}</span>
+            `;
+        }
+
+        // オートビューアー機能
+        function startAutoViewer() {
+            if (articles.length === 0) {
+                showMessage('表示する記事がありません', 'error');
+                return;
+            }
+
+            // 現在表示中の記事を取得
+            autoArticles = currentFeedId === null 
+                ? [...articles] 
+                : articles.filter(a => a.feed_id === currentFeedId);
+
+            if (autoArticles.length === 0) {
+                showMessage('表示する記事がありません', 'error');
+                return;
+            }
+
+            // 日付順にソート
+            autoArticles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+
+            currentAutoIndex = 0;
+            autoViewerActive = true;
+            isPlaying = true;
+
+            document.getElementById('autoViewer').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            displayAutoArticle(0);
+            startAutoTimer();
+
+            // ESCキーで終了
+            document.addEventListener('keydown', handleAutoViewerKeydown);
+        }
+
+        function closeAutoViewer() {
+            autoViewerActive = false;
+            isPlaying = false;
+
+            clearInterval(autoViewerInterval);
+            clearInterval(progressInterval);
+
+            document.getElementById('autoViewer').classList.remove('active');
+            document.body.style.overflow = 'auto';
+
+            document.removeEventListener('keydown', handleAutoViewerKeydown);
+        }
+
+        function handleAutoViewerKeydown(e) {
+            if (!autoViewerActive) return;
+
+            switch(e.key) {
+                case 'Escape':
+                    closeAutoViewer();
+                    break;
+                case ' ':
+                case 'Enter':
+                    e.preventDefault();
+                    togglePlayPause();
+                    break;
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    previousArticle();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    nextArticle();
+                    break;
+            }
+        }
+
+        function displayAutoArticle(index) {
+            if (index < 0 || index >= autoArticles.length) return;
+
+            const article = autoArticles[index];
+            const articleEl = document.getElementById('autoArticle');
+
+            // フェードアウト
+            articleEl.classList.remove('visible');
+
+            setTimeout(() => {
+                // 記事内容を更新
+                document.getElementById('autoFeedTitle').textContent = `📰 ${article.feed_title}`;
+                document.getElementById('autoDate').textContent = new Date(article.pubDate).toLocaleDateString('ja-JP');
+                document.getElementById('autoTitle').textContent = article.title;
+                document.getElementById('autoDescription').textContent = article.description;
+                document.getElementById('autoLink').href = article.link;
+
+                // プログレステキストを更新
+                document.getElementById('progressText').textContent = 
+                    `${index + 1} / ${autoArticles.length} 記事`;
+
+                // フェードイン
+                articleEl.classList.add('visible');
+
+                currentAutoIndex = index;
+            }, 300);
+        }
+
+        function nextArticle() {
+            const nextIndex = currentAutoIndex + 1;
+            
+            // 最後の記事に到達した場合
+            if (nextIndex >= autoArticles.length) {
+                completedCycles++;
+                
+                if (autoRefreshEnabled && !isRefreshing) {
+                    // 自動更新を実行
+                    performAutoRefresh();
+                    return;
+                } else {
+                    // 最初に戻る
+                    displayAutoArticle(0);
+                }
+            } else {
+                displayAutoArticle(nextIndex);
+            }
+            
+            if (isPlaying) {
+                restartAutoTimer();
+            }
+        }
+
+        function previousArticle() {
+            const prevIndex = currentAutoIndex === 0 ? autoArticles.length - 1 : currentAutoIndex - 1;
+            displayAutoArticle(prevIndex);
+            
+            if (isPlaying) {
+                restartAutoTimer();
+            }
+        }
+
+        function togglePlayPause() {
+            isPlaying = !isPlaying;
+            const btn = document.getElementById('playPauseBtn');
+
+            if (isPlaying) {
+                btn.textContent = '⏸️ 一時停止';
+                btn.classList.remove('active');
+                startAutoTimer();
+            } else {
+                btn.textContent = '▶️ 再生';
+                btn.classList.add('active');
+                clearInterval(autoViewerInterval);
+                clearInterval(progressInterval);
+            }
+        }
+
+        function changeSpeed() {
+            currentSpeed = parseInt(document.getElementById('speedSelector').value);
+            
+            if (isPlaying) {
+                restartAutoTimer();
+            }
+        }
+
+        function startAutoTimer() {
+            clearInterval(autoViewerInterval);
+            clearInterval(progressInterval);
+
+            if (!isPlaying) return;
+
+            startProgressBar();
+
+            autoViewerInterval = setInterval(() => {
+                if (autoViewerActive && isPlaying) {
+                    nextArticle();
+                }
+            }, currentSpeed);
+        }
+
+        function restartAutoTimer() {
+            clearInterval(autoViewerInterval);
+            clearInterval(progressInterval);
+            
+            if (isPlaying) {
+                startAutoTimer();
+            }
+        }
+
+        function startProgressBar() {
+            const progressBar = document.getElementById('autoProgress');
+            let progress = 0;
+            const increment = 100 / (currentSpeed / 50); // 50msごとに更新
+
+            progressBar.style.width = '0%';
+
+            progressInterval = setInterval(() => {
+                progress += increment;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(progressInterval);
+                }
+                progressBar.style.width = progress + '%';
+            }, 50);
+        }
+
+        // 自動更新機能
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            const toggle = document.getElementById('autoRefreshToggle');
+            
+            if (autoRefreshEnabled) {
+                toggle.classList.add('active');
+            } else {
+                toggle.classList.remove('active');
+            }
+            
+            // 設定を保存
+            localStorage.setItem('autoRefreshEnabled', JSON.stringify(autoRefreshEnabled));
+        }
+
+        async function performAutoRefresh() {
+            if (isRefreshing) return;
+            
+            isRefreshing = true;
+            
+            // 一時停止
+            const wasPlaying = isPlaying;
+            if (isPlaying) {
+                togglePlayPause();
+            }
+            
+            // 更新状況を表示
+            showRefreshStatus('新しい記事を取得中...');
+            
+            try {
+                const oldArticleCount = articles.length;
+                
+                if (currentFeedId === null) {
+                    // 全フィード更新
+                    showRefreshStatus(`フィードを更新中... (${feeds.length}個)`);
+                    await refreshAllFeedsInternal();
+                } else {
+                    // 選択されたフィード更新
+                    const feed = feeds.find(f => f.id === currentFeedId);
+                    if (feed) {
+                        showRefreshStatus(`${feed.title} を更新中...`);
+                        await refreshFeed(feed);
+                    }
+                }
+                
+                // 新しい記事配列を準備
+                const newAutoArticles = currentFeedId === null 
+                    ? [...articles] 
+                    : articles.filter(a => a.feed_id === currentFeedId);
+                    
+                newAutoArticles.sort((a, b) => new Date(b.pubDate) - new Date(a.pubDate));
+                
+                const newArticleCount = articles.length;
+                const addedArticles = newArticleCount - oldArticleCount;
+                
+                if (addedArticles > 0) {
+                    // 新しい記事がある場合
+                    showRefreshStatus(`✨ ${addedArticles}件の新しい記事を発見！`);
+                    autoArticles = newAutoArticles;
+                    currentAutoIndex = 0;
+                    
+                    setTimeout(() => {
+                        hideRefreshStatus();
+                        displayAutoArticle(0);
+                        
+                        if (wasPlaying) {
+                            togglePlayPause();
+                        }
+                    }, 2000);
+                } else {
+                    // 新しい記事がない場合
+                    showRefreshStatus('新しい記事はありませんでした。最初から再開します。');
+                    
+                    setTimeout(() => {
+                        hideRefreshStatus();
+                        displayAutoArticle(0);
+                        
+                        if (wasPlaying) {
+                            togglePlayPause();
+                        }
+                    }, 2000);
+                }
+                
+            } catch (error) {
+                console.error('自動更新エラー:', error);
+                showRefreshStatus('❌ 更新に失敗しました。最初から再開します。');
+                
+                setTimeout(() => {
+                    hideRefreshStatus();
+                    displayAutoArticle(0);
+                    
+                    if (wasPlaying) {
+                        togglePlayPause();
+                    }
+                }, 3000);
+            } finally {
+                isRefreshing = false;
+            }
+        }
+
+        async function refreshAllFeedsInternal() {
+            for (const feed of feeds) {
+                try {
+                    await refreshFeed(feed);
+                } catch (error) {
+                    console.error(`フィード更新エラー (${feed.url}):`, error);
+                }
+            }
+        }
+
+        function showRefreshStatus(message) {
+            document.getElementById('refreshMessage').textContent = message;
+            document.getElementById('autoRefreshStatus').classList.add('active');
+        }
+
+        function hideRefreshStatus() {
+            document.getElementById('autoRefreshStatus').classList.remove('active');
+        }
+    </script>
+</body>
+</html>

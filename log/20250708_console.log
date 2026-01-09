@@ -1,0 +1,1906 @@
+PostodoMainPlugin: Starting onload
+plugin:postodo:2770 Postodo plugin loaded successfully
+plugin:postodo:2930 PostodoMainPlugin: onload completed successfully
+plugin:postodo:2217 [DEBUG] PostodoView: Loading notes...
+plugin:postodo:1280 [DEBUG] Finding all postodo notes...
+plugin:postodo:1293 [DEBUG] Scanning 5 files in Postodo folder (filtered from 43 total files)
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752893881379-9fx7ocank.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752893881379-9fx7ocank.md: tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T11:58
+updated: 2025-07-19T11:58
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752893881379-9fx7ocank.md: {tags: Array(1), postodo_id: 'note-1752893881379-9fx7ocank', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752893881379-9fx7ocank.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752893881379-9fx7ocank.md: note-1752893881379-9fx7ocank
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752893881379-9fx7ocank.md: {id: 'note-1752893881379-9fx7ocank', content: 'AAAAAAAA', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1299 [DEBUG] Found postodo note in Postodo/note-1752893881379-9fx7ocank.md: note-1752893881379-9fx7ocank
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752893881379-9fx7ocank at Postodo/note-1752893881379-9fx7ocank.md
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752893877043-colibsk49.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752893877043-colibsk49
+postodo_position:
+  x: 181
+  y: 303
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752893877043-colibsk49.md: tags:
+  - postodo
+postodo_id: note-1752893877043-colibsk49
+postodo_position:
+  x: 181
+  y: 303
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:57
+updated: 2025-07-19T11:58
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752893877043-colibsk49.md: {tags: Array(1), postodo_id: 'note-1752893877043-colibsk49', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752893877043-colibsk49.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752893877043-colibsk49.md: note-1752893877043-colibsk49
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752893877043-colibsk49.md: {id: 'note-1752893877043-colibsk49', content: 'New note', completed: true, position: {…}, dimensions: {…}, …}
+plugin:postodo:1299 [DEBUG] Found postodo note in Postodo/note-1752893877043-colibsk49.md: note-1752893877043-colibsk49
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752893877043-colibsk49 at Postodo/note-1752893877043-colibsk49.md
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752893871181-3svikynwr.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752893871181-3svikynwr
+postodo_position:
+  x: 249
+  y: 225
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752893871181-3svikynwr.md: tags:
+  - postodo
+postodo_id: note-1752893871181-3svikynwr
+postodo_position:
+  x: 249
+  y: 225
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:57
+updated: 2025-07-19T11:58
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752893871181-3svikynwr.md: {tags: Array(1), postodo_id: 'note-1752893871181-3svikynwr', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752893871181-3svikynwr.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752893871181-3svikynwr.md: note-1752893871181-3svikynwr
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752893871181-3svikynwr.md: {id: 'note-1752893871181-3svikynwr', content: 'New note', completed: true, position: {…}, dimensions: {…}, …}
+plugin:postodo:1299 [DEBUG] Found postodo note in Postodo/note-1752893871181-3svikynwr.md: note-1752893871181-3svikynwr
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752893871181-3svikynwr at Postodo/note-1752893871181-3svikynwr.md
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752892195893-ee0sx7yyo.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752892195893-ee0sx7yyo
+postodo_position:
+  x: 195
+  y: 141
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752892195893-ee0sx7yyo.md: tags:
+  - postodo
+postodo_id: note-1752892195893-ee0sx7yyo
+postodo_position:
+  x: 195
+  y: 141
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:29
+updated: 2025-07-19T11:30
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752892195893-ee0sx7yyo.md: {tags: Array(1), postodo_id: 'note-1752892195893-ee0sx7yyo', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752892195893-ee0sx7yyo.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752892195893-ee0sx7yyo.md: note-1752892195893-ee0sx7yyo
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752892195893-ee0sx7yyo.md: {id: 'note-1752892195893-ee0sx7yyo', content: 'Add', completed: true, position: {…}, dimensions: {…}, …}
+plugin:postodo:1299 [DEBUG] Found postodo note in Postodo/note-1752892195893-ee0sx7yyo.md: note-1752892195893-ee0sx7yyo
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752892195893-ee0sx7yyo at Postodo/note-1752892195893-ee0sx7yyo.md
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752892173817-rnn61uzmj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752892173817-rnn61uzmj
+postodo_position:
+  x: 14
+  y: 215
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size:
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752892173817-rnn61uzmj.md: tags:
+  - postodo
+postodo_id: note-1752892173817-rnn61uzmj
+postodo_position:
+  x: 14
+  y: 215
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:29
+updated: 2025-07-19T11:30
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752892173817-rnn61uzmj.md: {tags: Array(1), postodo_id: 'note-1752892173817-rnn61uzmj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752892173817-rnn61uzmj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752892173817-rnn61uzmj.md: note-1752892173817-rnn61uzmj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752892173817-rnn61uzmj.md: {id: 'note-1752892173817-rnn61uzmj', content: 'test', completed: true, position: {…}, dimensions: {…}, …}
+plugin:postodo:1299 [DEBUG] Found postodo note in Postodo/note-1752892173817-rnn61uzmj.md: note-1752892173817-rnn61uzmj
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752892173817-rnn61uzmj at Postodo/note-1752892173817-rnn61uzmj.md
+plugin:postodo:1310 [DEBUG] Found 5 postodo notes
+plugin:postodo:2220 [DEBUG] PostodoView: Loaded 5 notes
+plugin:postodo:2301 [DEBUG] PostodoView: Rendering 5 notes
+plugin:postodo:2306 [DEBUG] PostodoView: Showing 1 non-completed notes
+plugin:postodo:1509 [DEBUG] Creating note with options: {content: 'New note', position: {…}}
+plugin:postodo:1524 [DEBUG] Built note: {id: 'note-1752894413190-opdohi3fj', filePath: 'Postodo/note-1752894413190-opdohi3fj.md', content: 'New note', position: {…}, dimensions: {…}, …}
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 235
+  y: 597
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 235
+  y: 597
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 235
+  y: 597
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:1527 [DEBUG] Note creation successful: note-1752894413190-opdohi3fj
+plugin:postodo:2318 [DEBUG] Force rendering note note-1752894413190-opdohi3fj, removing existing element
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 235
+  y: 597
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 235
+  y: 597
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 235
+  y: 597
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 235
+  y: 597
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2177 [DEBUG] PostodoView: Updating existing note note-1752894413190-opdohi3fj
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894413190-opdohi3fj without resetting event listeners
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2177 [DEBUG] PostodoView: Updating existing note note-1752894413190-opdohi3fj
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894413190-opdohi3fj without resetting event listeners
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:2375 [DEBUG] PostodoView: Double-click edit triggered for note note-1752894413190-opdohi3fj
+plugin:postodo:2390 [DEBUG] PostodoView: Starting edit for note note-1752894413190-opdohi3fj, content: "New note"
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2162 [DEBUG] PostodoView: Note note-1752894413190-opdohi3fj is being edited, ignoring external update
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:06
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:2404 [DEBUG] PostodoView: Saving edit for note note-1752894413190-opdohi3fj: "New note" -> "testtestsss"
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2162 [DEBUG] PostodoView: Note note-1752894413190-opdohi3fj is being edited, ignoring external update
+plugin:postodo:1509 [DEBUG] Creating note with options: {content: 'New note', position: {…}}
+plugin:postodo:1524 [DEBUG] Built note: {id: 'note-1752894422277-k0iwnt3ao', filePath: 'Postodo/note-1752894422277-k0iwnt3ao.md', content: 'New note', position: {…}, dimensions: {…}, …}
+plugin:postodo:1232 [DEBUG] Saving note note-1752894422277-k0iwnt3ao to Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894422277-k0iwnt3ao
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894422277-k0iwnt3ao: {tags: Array(1), postodo_id: 'note-1752894422277-k0iwnt3ao', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894422277-k0iwnt3ao: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894422277-k0iwnt3ao: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894422277-k0iwnt3ao: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894422277-k0iwnt3ao
+plugin:postodo:1527 [DEBUG] Note creation successful: note-1752894422277-k0iwnt3ao
+plugin:postodo:2318 [DEBUG] Force rendering note note-1752894422277-k0iwnt3ao, removing existing element
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1410 File change detected: note-1752894413190-opdohi3fj, completed: false -> false
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894413190-opdohi3fj without resetting event listeners
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2177 [DEBUG] PostodoView: Updating existing note note-1752894413190-opdohi3fj
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894413190-opdohi3fj without resetting event listeners
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894422277-k0iwnt3ao at Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894422277-k0iwnt3ao.md: tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:07
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894422277-k0iwnt3ao.md: {tags: Array(1), postodo_id: 'note-1752894422277-k0iwnt3ao', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894422277-k0iwnt3ao.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894422277-k0iwnt3ao.md: note-1752894422277-k0iwnt3ao
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894422277-k0iwnt3ao.md: {id: 'note-1752894422277-k0iwnt3ao', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894422277-k0iwnt3ao.md: tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:07
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894422277-k0iwnt3ao.md: {tags: Array(1), postodo_id: 'note-1752894422277-k0iwnt3ao', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894422277-k0iwnt3ao.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894422277-k0iwnt3ao.md: note-1752894422277-k0iwnt3ao
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894422277-k0iwnt3ao.md: {id: 'note-1752894422277-k0iwnt3ao', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1035 [DEBUG] No frontmatter found in Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1421 Postodo data removed from note note-1752894422277-k0iwnt3ao - content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:2186 [DEBUG] PostodoView: Note deleted event for note-1752894422277-k0iwnt3ao
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1035 [DEBUG] No frontmatter found in Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1035 [DEBUG] No frontmatter found in Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1035 [DEBUG] No frontmatter found in Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894422277-k0iwnt3ao.md: tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:07
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894422277-k0iwnt3ao.md: {tags: Array(1), postodo_id: 'note-1752894422277-k0iwnt3ao', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894422277-k0iwnt3ao.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894422277-k0iwnt3ao.md: note-1752894422277-k0iwnt3ao
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894422277-k0iwnt3ao.md: {id: 'note-1752894422277-k0iwnt3ao', content: 'AAAAA', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1410 File change detected: note-1752894422277-k0iwnt3ao, completed: undefined -> false
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894422277-k0iwnt3ao, completed: false
+plugin:postodo:2177 [DEBUG] PostodoView: Updating existing note note-1752894422277-k0iwnt3ao
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894422277-k0iwnt3ao without resetting event listeners
+plugin:postodo:1404 File change detected for note-1752894422277-k0iwnt3ao, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1035 [DEBUG] No frontmatter found in Postodo/note-1752894422277-k0iwnt3ao.md
+plugin:postodo:1421 Postodo data removed from note note-1752894422277-k0iwnt3ao - content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894422277-k0iwnt3ao
+postodo_position:
+  x: 369
+  y: 586
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:2186 [DEBUG] PostodoView: Note deleted event for note-1752894422277-k0iwnt3ao
+plugin:postodo:1232 [DEBUG] Saving note note-1752893881379-9fx7ocank to Postodo/note-1752893881379-9fx7ocank.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752893881379-9fx7ocank
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752893881379-9fx7ocank: {tags: Array(1), postodo_id: 'note-1752893881379-9fx7ocank', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752893881379-9fx7ocank: 252 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752893881379-9fx7ocank: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752893881379-9fx7ocank: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752893881379-9fx7ocank
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752893881379-9fx7ocank, completed: true
+plugin:postodo:2172 [DEBUG] PostodoView: Hiding completed note note-1752893881379-9fx7ocank
+VM24190 plugin:postodo:1404 File change detected for note-1752893881379-9fx7ocank, reading content...
+VM24190 plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752893881379-9fx7ocank.md
+VM24190 plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+VM24190 plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752893881379-9fx7ocank.md: tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:58
+updated: 2025-07-19T12:07
+VM24190 plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752893881379-9fx7ocank.md: {tags: Array(1), postodo_id: 'note-1752893881379-9fx7ocank', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+VM24190 plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+VM24190 plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752893881379-9fx7ocank.md!
+VM24190 plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752893881379-9fx7ocank.md: note-1752893881379-9fx7ocank
+VM24190 plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752893881379-9fx7ocank.md: {id: 'note-1752893881379-9fx7ocank', content: 'AAAAAAAA', completed: true, position: {…}, dimensions: {…}, …}
+VM24190 plugin:postodo:1410 File change detected: note-1752893881379-9fx7ocank, completed: false -> true
+VM24190 plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752893881379-9fx7ocank, completed: true
+VM24190 plugin:postodo:2172 [DEBUG] PostodoView: Hiding completed note note-1752893881379-9fx7ocank
+plugin:postodo:1404 File change detected for note-1752893881379-9fx7ocank, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752893881379-9fx7ocank.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752893881379-9fx7ocank.md: tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:58
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752893881379-9fx7ocank.md: {tags: Array(1), postodo_id: 'note-1752893881379-9fx7ocank', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752893881379-9fx7ocank.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752893881379-9fx7ocank.md: note-1752893881379-9fx7ocank
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752893881379-9fx7ocank.md: {id: 'note-1752893881379-9fx7ocank', content: 'AAAAAAAA', completed: true, position: {…}, dimensions: {…}, …}
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752893881379-9fx7ocank at Postodo/note-1752893881379-9fx7ocank.md
+VM24190 plugin:postodo:1404 File change detected for note-1752893881379-9fx7ocank, reading content...
+VM24190 plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752893881379-9fx7ocank.md
+VM24190 plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+VM24190 plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752893881379-9fx7ocank.md: tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:58
+updated: 2025-07-19T12:07
+VM24190 plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752893881379-9fx7ocank.md: {tags: Array(1), postodo_id: 'note-1752893881379-9fx7ocank', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+VM24190 plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+VM24190 plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752893881379-9fx7ocank.md!
+VM24190 plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752893881379-9fx7ocank.md: note-1752893881379-9fx7ocank
+VM24190 plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752893881379-9fx7ocank.md: {id: 'note-1752893881379-9fx7ocank', content: 'AAAAAAAA', completed: true, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752893881379-9fx7ocank, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752893881379-9fx7ocank.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752893881379-9fx7ocank.md: tags:
+  - postodo
+postodo_id: note-1752893881379-9fx7ocank
+postodo_position:
+  x: 130
+  y: 217
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: true
+created: 2025-07-19T11:58
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752893881379-9fx7ocank.md: {tags: Array(1), postodo_id: 'note-1752893881379-9fx7ocank', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752893881379-9fx7ocank.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752893881379-9fx7ocank.md: note-1752893881379-9fx7ocank
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752893881379-9fx7ocank.md: {id: 'note-1752893881379-9fx7ocank', content: 'AAAAAAAA', completed: true, position: {…}, dimensions: {…}, …}
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2177 [DEBUG] PostodoView: Updating existing note note-1752894413190-opdohi3fj
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894413190-opdohi3fj without resetting event listeners
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:2390 [DEBUG] PostodoView: Starting edit for note note-1752894413190-opdohi3fj, content: "testtestsss"
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2162 [DEBUG] PostodoView: Note note-1752894413190-opdohi3fj is being edited, ignoring external update
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:2404 [DEBUG] PostodoView: Saving edit for note note-1752894413190-opdohi3fj: "testtestsss" -> "testtestsssaaaa"
+plugin:postodo:1232 [DEBUG] Saving note note-1752894413190-opdohi3fj to Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894413190-opdohi3fj
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894413190-opdohi3fj: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894413190-opdohi3fj: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894413190-opdohi3fj: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894413190-opdohi3fj
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2162 [DEBUG] PostodoView: Note note-1752894413190-opdohi3fj is being edited, ignoring external update
+plugin:postodo:1509 [DEBUG] Creating note with options: {content: 'New note', position: {…}}
+plugin:postodo:1524 [DEBUG] Built note: {id: 'note-1752894465601-4cxlfy2ps', filePath: 'Postodo/note-1752894465601-4cxlfy2ps.md', content: 'New note', position: {…}, dimensions: {…}, …}
+plugin:postodo:1232 [DEBUG] Saving note note-1752894465601-4cxlfy2ps to Postodo/note-1752894465601-4cxlfy2ps.md
+plugin:postodo:1186 [DEBUG] Updating note content for note-1752894465601-4cxlfy2ps
+plugin:postodo:1154 [DEBUG] Creating frontmatter for note-1752894465601-4cxlfy2ps: {tags: Array(1), postodo_id: 'note-1752894465601-4cxlfy2ps', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1182 [DEBUG] Generated frontmatter for note-1752894465601-4cxlfy2ps: 253 chars
+plugin:postodo:1188 [DEBUG] Generated frontmatter: ---
+tags:
+  - postodo
+postodo_id: note-1752894465601-4cxlfy2ps
+postodo_position:
+  x: 446
+  y: 560
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+---
+
+
+plugin:postodo:1198 [DEBUG] Final content for note-1752894465601-4cxlfy2ps: ---
+tags:
+  - postodo
+postodo_id: note-1752894465601-4cxlfy2ps
+postodo_position:
+  x: 446
+  y: 560
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1237 [DEBUG] Generated content for note-1752894465601-4cxlfy2ps: ---
+tags:
+  - postodo
+postodo_id: note-1752894465601-4cxlfy2ps
+postodo_position:
+  x: 446
+  y: 560
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1410 File change detected: note-1752894413190-opdohi3fj, completed: false -> false
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894413190-opdohi3fj without resetting event listeners
+plugin:postodo:2160 [DEBUG] PostodoView: Note updated event for note-1752894413190-opdohi3fj, completed: false
+plugin:postodo:2177 [DEBUG] PostodoView: Updating existing note note-1752894413190-opdohi3fj
+plugin:postodo:2488 [DEBUG] PostodoView: Updated note element note-1752894413190-opdohi3fj without resetting event listeners
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894413190-opdohi3fj at Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1240 [DEBUG] Successfully saved note note-1752894465601-4cxlfy2ps
+plugin:postodo:1527 [DEBUG] Note creation successful: note-1752894465601-4cxlfy2ps
+plugin:postodo:2318 [DEBUG] Force rendering note note-1752894465601-4cxlfy2ps, removing existing element
+plugin:postodo:1404 File change detected for note-1752894413190-opdohi3fj, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894413190-opdohi3fj.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894413190-opdohi3fj.md: tags:
+  - postodo
+postodo_id: note-1752894413190-opdohi3fj
+postodo_position:
+  x: 127
+  y: 497
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:06
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894413190-opdohi3fj.md: {tags: Array(1), postodo_id: 'note-1752894413190-opdohi3fj', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894413190-opdohi3fj.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894413190-opdohi3fj.md: note-1752894413190-opdohi3fj
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894413190-opdohi3fj.md: {id: 'note-1752894413190-opdohi3fj', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1383 [DEBUG] Setting up file watcher for note-1752894465601-4cxlfy2ps at Postodo/note-1752894465601-4cxlfy2ps.md
+plugin:postodo:1404 File change detected for note-1752894465601-4cxlfy2ps, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894465601-4cxlfy2ps.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894465601-4cxlfy2ps
+postodo_position:
+  x: 446
+  y: 560
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894465601-4cxlfy2ps.md: tags:
+  - postodo
+postodo_id: note-1752894465601-4cxlfy2ps
+postodo_position:
+  x: 446
+  y: 560
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:07
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894465601-4cxlfy2ps.md: {tags: Array(1), postodo_id: 'note-1752894465601-4cxlfy2ps', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894465601-4cxlfy2ps.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894465601-4cxlfy2ps.md: note-1752894465601-4cxlfy2ps
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894465601-4cxlfy2ps.md: {id: 'note-1752894465601-4cxlfy2ps', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}
+plugin:postodo:1404 File change detected for note-1752894465601-4cxlfy2ps, reading content...
+plugin:postodo:1030 [DEBUG] Extracting postodo data from Postodo/note-1752894465601-4cxlfy2ps.md
+plugin:postodo:1031 [DEBUG] Content preview: ---
+tags:
+  - postodo
+postodo_id: note-1752894465601-4cxlfy2ps
+postodo_position:
+  x: 446
+  y: 560
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size
+plugin:postodo:1044 [DEBUG] Found frontmatter in Postodo/note-1752894465601-4cxlfy2ps.md: tags:
+  - postodo
+postodo_id: note-1752894465601-4cxlfy2ps
+postodo_position:
+  x: 446
+  y: 560
+  zIndex: 1
+postodo_dimensions:
+  width: 200
+  height: 180
+postodo_appearance:
+  color: yellow
+  size: medium
+  rotation: 0
+postodo_completed: false
+created: 2025-07-19T12:07
+updated: 2025-07-19T12:07
+plugin:postodo:1093 [DEBUG] Parsed frontmatter for Postodo/note-1752894465601-4cxlfy2ps.md: {tags: Array(1), postodo_id: 'note-1752894465601-4cxlfy2ps', postodo_position: {…}, postodo_dimensions: {…}, postodo_appearance: {…}, …}
+plugin:postodo:1094 [DEBUG] Tags in frontmatter: ['postodo'] object
+plugin:postodo:1099 [DEBUG] Found postodo tag in Postodo/note-1752894465601-4cxlfy2ps.md!
+plugin:postodo:1101 [DEBUG] Has postodo properties in Postodo/note-1752894465601-4cxlfy2ps.md: note-1752894465601-4cxlfy2ps
+plugin:postodo:1115 [DEBUG] Successfully extracted postodo data from Postodo/note-1752894465601-4cxlfy2ps.md: {id: 'note-1752894465601-4cxlfy2ps', content: 'New note', completed: false, position: {…}, dimensions: {…}, …}

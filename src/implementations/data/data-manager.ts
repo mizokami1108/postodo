@@ -4,6 +4,7 @@ import { StickyNote, CreateNoteOptions, UpdateNoteOptions, Result } from '../../
 import { IEventBus } from '../../core/event-bus';
 import { NoteValidator } from '../../utils/validators';
 import { ErrorHandler, ValidationError } from '../../utils/error-handler';
+import { ConfigProvider } from '../../providers/config-provider';
 
 export class DataManager implements IDataManager {
     private editingNotes = new Set<string>();
@@ -12,7 +13,8 @@ export class DataManager implements IDataManager {
 
     constructor(
         private noteRepository: INoteRepository,
-        private eventBus: IEventBus
+        private eventBus: IEventBus,
+        private configProvider?: ConfigProvider
     ) {
         this.errorHandler = ErrorHandler.getInstance(eventBus);
         this.setupConfigWatchers();
@@ -20,6 +22,8 @@ export class DataManager implements IDataManager {
 
     async createNote(options: CreateNoteOptions): Promise<Result<StickyNote>> {
         try {
+            console.log(`[DEBUG] Creating note with options:`, options);
+            
             // バリデーション
             const validation = NoteValidator.validateCreateNoteOptions(options);
             if (!validation.valid) {
@@ -36,15 +40,21 @@ export class DataManager implements IDataManager {
             }
 
             const note = this.buildNote(options);
+            console.log(`[DEBUG] Built note:`, note);
+            
             const result = await this.noteRepository.save(note);
             
             if (result.success) {
+                console.log(`[DEBUG] Note creation successful:`, note.id);
                 this.eventBus.emit('note-created', { note });
                 return { success: true, data: note };
+            } else {
+                console.error(`[DEBUG] Note creation failed:`, result.error);
             }
             
             return { success: false, error: result.error };
         } catch (error) {
+            console.error(`[DEBUG] Error in createNote:`, error);
             this.errorHandler.handleError(error as Error, {
                 component: 'DataManager',
                 action: 'createNote'
@@ -236,9 +246,20 @@ export class DataManager implements IDataManager {
         const now = new Date().toISOString();
         const id = this.generateId();
         
+        let postodoFolder = 'Postodo';
+        try {
+            if (this.configProvider) {
+                postodoFolder = this.configProvider.get<string>('postodoFolder') || 'Postodo';
+            }
+        } catch (error) {
+            console.warn('Failed to get postodoFolder from config, using default:', error);
+        }
+        
+        const filePath = `${postodoFolder}/${id}.md`;
+        
         return {
             id,
-            filePath: `Postodo/${id}.md`,
+            filePath,
             content: options.content,
             position: options.position || { x: 100, y: 100, zIndex: 1 },
             dimensions: options.dimensions || { width: 200, height: 180 },
@@ -250,10 +271,11 @@ export class DataManager implements IDataManager {
             metadata: {
                 created: now,
                 modified: now,
-                tags: [],
+                tags: ['postodo'],
                 links: [],
                 attachments: []
-            }
+            },
+            completed: options.completed || false
         };
     }
 

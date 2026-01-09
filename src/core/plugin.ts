@@ -9,6 +9,7 @@ import { PostodoView } from '../ui/postodo-view';
 import { PostodoSettingsTab } from '../settings/postodo-settings-tab';
 import { PostodoSettings, DEFAULT_SETTINGS } from '../types/config-types';
 import { SERVICE_TOKENS } from '../types/core-types';
+import { IStorageAdapter } from '../interfaces/storage/i-storage-adapter';
 import { ErrorHandler } from '../utils/error-handler';
 
 export class PostodoPlugin {
@@ -76,7 +77,8 @@ export class PostodoPlugin {
         const eventBus = this.container.resolve<IEventBus>(SERVICE_TOKENS.EVENT_BUS);
         this.configProvider = new ConfigProvider(this.settings, eventBus);
         
-        this.container.register(SERVICE_TOKENS.CONFIG, ConfigProvider, { singleton: true });
+        // ConfigProviderをファクトリーとして登録
+        this.container.registerFactory(SERVICE_TOKENS.CONFIG, () => this.configProvider);
 
         // エラーハンドラーの初期化
         this.errorHandler = ErrorHandler.getInstance(eventBus);
@@ -90,18 +92,17 @@ export class PostodoPlugin {
         });
 
         // データサービスの登録
-        this.container.register(SERVICE_TOKENS.NOTE_REPOSITORY, NoteRepository, {
-            dependencies: [SERVICE_TOKENS.STORAGE_ADAPTER, SERVICE_TOKENS.EVENT_BUS],
-            singleton: true
+        this.container.registerFactory(SERVICE_TOKENS.NOTE_REPOSITORY, () => {
+            const storageAdapter = this.container.resolve<IStorageAdapter>(SERVICE_TOKENS.STORAGE_ADAPTER);
+            const eventBus = this.container.resolve<IEventBus>(SERVICE_TOKENS.EVENT_BUS);
+            const configProvider = this.container.resolve(SERVICE_TOKENS.CONFIG);
+            return new NoteRepository(storageAdapter, eventBus, this.app.vault, configProvider);
         });
 
         this.container.register(SERVICE_TOKENS.DATA_MANAGER, DataManager, {
-            dependencies: [SERVICE_TOKENS.NOTE_REPOSITORY, SERVICE_TOKENS.EVENT_BUS],
+            dependencies: [SERVICE_TOKENS.NOTE_REPOSITORY, SERVICE_TOKENS.EVENT_BUS, SERVICE_TOKENS.CONFIG],
             singleton: true
         });
-
-        // インスタンスの設定
-        this.container.registerFactory(SERVICE_TOKENS.CONFIG, () => this.configProvider);
     }
 
     private registerView(): void {
