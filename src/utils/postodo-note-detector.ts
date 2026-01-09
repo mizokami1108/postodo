@@ -1,5 +1,6 @@
 import { TFile } from 'obsidian';
 import { StickyNote, NoteColor, NoteSize } from '../types/core-types';
+import { DataRestorationValidator, DEFAULT_VALUES } from './data-restoration-validator';
 
 export interface TaskInfo {
     isTask: boolean;
@@ -408,19 +409,34 @@ export class PostodoNoteDetector {
 
     static toStickyNote(data: PostodoNoteData, filePath: string): StickyNote {
         const now = new Date().toISOString();
+        const validator = new DataRestorationValidator();
+        
+        // 位置データの検証と修正
+        const positionResult = validator.validatePosition(data.position, data.id);
+        if (!positionResult.isValid) {
+            positionResult.warnings.forEach(warning => console.warn(`[PostodoNoteDetector] ${warning}`));
+        }
+        
+        // 寸法データの検証と修正
+        const dimensionsResult = validator.validateDimensions(data.dimensions, data.id);
+        if (!dimensionsResult.isValid) {
+            dimensionsResult.warnings.forEach(warning => console.warn(`[PostodoNoteDetector] ${warning}`));
+        }
+        
+        // 外観データの検証と修正
+        const appearanceResult = validator.validateAppearance(data.appearance, data.id);
+        if (!appearanceResult.isValid) {
+            appearanceResult.warnings.forEach(warning => console.warn(`[PostodoNoteDetector] ${warning}`));
+        }
         
         return {
             id: data.id,
             filePath,
             title: data.title,
             content: data.content,
-            position: data.position || { x: 100, y: 100, zIndex: 1 },
-            dimensions: data.dimensions || { width: 200, height: 180 },
-            appearance: data.appearance || {
-                color: 'yellow' as NoteColor,
-                size: 'medium' as NoteSize,
-                rotation: 0
-            },
+            position: positionResult.correctedValue,
+            dimensions: dimensionsResult.correctedValue,
+            appearance: appearanceResult.correctedValue,
             metadata: {
                 created: now,
                 modified: now,
