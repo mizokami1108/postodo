@@ -23,26 +23,26 @@
     - **Property 4: タイトル変更時のファイル名同期**
     - **Validates: Requirements 2.5**
 
-- [ ] 2. ファイル命名戦略の実装
-  - [ ] 2.1 NamingStrategy インターフェースの作成
+- [x] 2. ファイル命名戦略の実装
+  - [x] 2.1 NamingStrategy インターフェースの作成
     - `src/interfaces/naming/i-naming-strategy.ts` を作成
     - _Requirements: 1.6, 13.4_
-  - [ ] 2.2 TimestampNamingStrategy の実装
+  - [x] 2.2 TimestampNamingStrategy の実装
     - `src/implementations/naming/timestamp-naming-strategy.ts` を作成
     - `Sticky-yyyyMMddHHmmss` 形式でファイル名を生成
     - _Requirements: 1.7_
-  - [ ] 2.3 SequentialNamingStrategy の実装
+  - [x] 2.3 SequentialNamingStrategy の実装
     - `src/implementations/naming/sequential-naming-strategy.ts` を作成
     - 既存ファイルを走査して次の連番を決定
     - _Requirements: 13.5_
-  - [ ] 2.4 NamingStrategy の DI 登録と DataManager への統合
+  - [x] 2.4 NamingStrategy の DI 登録と DataManager への統合
     - ConfigProvider から命名戦略を取得
     - DataManager.buildNote で NamingStrategy を使用
     - _Requirements: 1.6, 13.3_
-  - [ ] 2.5 プロパティテスト: ファイル命名規則
+  - [x] 2.5 プロパティテスト: ファイル命名規則
     - **Property 3: ファイル命名規則の適用**
     - **Validates: Requirements 1.6, 1.7, 13.3**
-  - [ ] 2.6 プロパティテスト: 連番の一意性
+  - [x] 2.6 プロパティテスト: 連番の一意性
     - **Property 19: 連番の一意性保証**
     - **Validates: Requirements 13.5**
 

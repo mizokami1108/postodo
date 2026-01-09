@@ -5,11 +5,57 @@ import { IEventBus } from '../../core/event-bus';
 import { NoteValidator } from '../../utils/validators';
 import { ErrorHandler, ValidationError } from '../../utils/error-handler';
 import { ConfigProvider } from '../../providers/config-provider';
+import { INamingStrategy } from '../../interfaces/naming/i-naming-strategy';
+import { NamingStrategyFactory } from '../naming/naming-strategy-factory';
+import { NamingStrategyType } from '../../types/config-types';
 
 export class DataManager implements IDataManager {
     private editingNotes = new Set<string>();
     private errorHandler: ErrorHandler;
     private configWatchers: (() => void)[] = [];
+    private namingStrategyFactory: NamingStrategyFactory;
+    private currentNamingStrategy: INamingStrategy;
+
+    constructor(
+        private noteRepository: INoteRepository,
+        private eventBus: IEventBus,
+        private configProvider?: ConfigProvider,
+        namingStrategyFactory?: NamingStrategyFactory
+    ) {
+        this.errorHandler = ErrorHandler.getInstance(eventBus);
+        this.namingStrategyFactory = namingStrategyFactory || new NamingStrategyFactory();
+        this.currentNamingStrategy = this.createNamingStrategy();
+        this.setupConfigWatchers();
+    }
+
+    /**
+     * 現在の設定に基づいて命名戦略を作成する
+     */
+    private createNamingStrategy(): INamingStrategy {
+        let strategyType: NamingStrategyType = 'timestamp';
+        try {
+            if (this.configProvider) {
+                strategyType = this.configProvider.get<NamingStrategyType>('namingStrategy') || 'timestamp';
+            }
+        } catch (error) {
+            console.warn('Failed to get namingStrategy from config, using default:', error);
+        }
+        return this.namingStrategyFactory.create(strategyType);
+    }
+
+    /**
+     * 命名戦略を更新する
+     */
+    updateNamingStrategy(): void {
+        this.currentNamingStrategy = this.createNamingStrategy();
+    }
+
+    /**
+     * 現在の命名戦略を取得する
+     */
+    getNamingStrategy(): INamingStrategy {
+        return this.currentNamingStrategy;
+    }
 
     constructor(
         private noteRepository: INoteRepository,
@@ -39,7 +85,7 @@ export class DataManager implements IDataManager {
                 return { success: false, error: validationError };
             }
 
-            const note = this.buildNote(options);
+            const note = await this.buildNote(options);
             console.log(`[DEBUG] Built note:`, note);
             
             const result = await this.noteRepository.save(note);
@@ -242,7 +288,7 @@ export class DataManager implements IDataManager {
         });
     }
 
-    private buildNote(options: CreateNoteOptions): StickyNote {
+    private async buildNote(options: CreateNoteOptions): Promise<StickyNote> {
         const now = new Date().toISOString();
         const id = this.generateId();
         
@@ -255,7 +301,12 @@ export class DataManager implements IDataManager {
             console.warn('Failed to get postodoFolder from config, using default:', error);
         }
         
-        const filePath = `${postodoFolder}/${id}.md`;
+        // NamingStrategyを使用してファイル名を生成
+        const fileName = await Promise.resolve(this.currentNamingStrategy.generateFileName({
+            title: options.title,
+            content: options.content
+        }));
+        const filePath = `${postodoFolder}/${fileName}.md`;
         
         return {
             id,
@@ -303,6 +354,10 @@ export class DataManager implements IDataManager {
                 break;
             case 'rendering.maxRenderedNotes':
                 this.eventBus.emit('max-rendered-notes-changed', { maxRenderedNotes: value });
+                break;
+            case 'namingStrategy':
+                this.updateNamingStrategy();
+                this.eventBus.emit('naming-strategy-changed', { namingStrategy: value });
                 break;
         }
     }
