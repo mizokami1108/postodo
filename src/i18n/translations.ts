@@ -5,6 +5,39 @@
 export type Language = 'en' | 'ja';
 
 export interface Translations {
+    // Context Menu
+    contextMenu: {
+        openNote: string;
+        edit: string;
+        changeColor: string;
+        changeSize: string;
+        markComplete: string;
+        markIncomplete: string;
+        delete: string;
+        copyFilename: string;
+        colors: {
+            yellow: string;
+            pink: string;
+            blue: string;
+            green: string;
+            orange: string;
+            purple: string;
+        };
+        sizes: {
+            small: string;
+            medium: string;
+            large: string;
+        };
+    };
+    // Tooltip
+    tooltip: {
+        filename: string;
+    };
+    // Action Bar
+    actionBar: {
+        complete: string;
+        incomplete: string;
+    };
     // Settings Tab
     settings: {
         title: string;
@@ -119,6 +152,36 @@ export interface Translations {
 
 export const translations: Record<Language, Translations> = {
     en: {
+        contextMenu: {
+            openNote: 'Open note',
+            edit: 'Edit',
+            changeColor: 'Change color',
+            changeSize: 'Change size',
+            markComplete: 'Mark complete',
+            markIncomplete: 'Mark incomplete',
+            delete: 'Delete',
+            copyFilename: 'Copy filename',
+            colors: {
+                yellow: 'Yellow',
+                pink: 'Pink',
+                blue: 'Blue',
+                green: 'Green',
+                orange: 'Orange',
+                purple: 'Purple',
+            },
+            sizes: {
+                small: 'Small',
+                medium: 'Medium',
+                large: 'Large',
+            },
+        },
+        tooltip: {
+            filename: 'File: {filename}',
+        },
+        actionBar: {
+            complete: 'Completed',
+            incomplete: 'Incomplete',
+        },
         settings: {
             title: 'Postodo Settings',
             language: {
@@ -230,6 +293,36 @@ export const translations: Record<Language, Translations> = {
         },
     },
     ja: {
+        contextMenu: {
+            openNote: 'ノートを開く',
+            edit: '編集',
+            changeColor: '色を変更',
+            changeSize: 'サイズ変更',
+            markComplete: '完了にする',
+            markIncomplete: '未完了に戻す',
+            delete: '削除',
+            copyFilename: 'ファイル名をコピー',
+            colors: {
+                yellow: '黄色',
+                pink: 'ピンク',
+                blue: '青',
+                green: '緑',
+                orange: 'オレンジ',
+                purple: '紫',
+            },
+            sizes: {
+                small: '小',
+                medium: '中',
+                large: '大',
+            },
+        },
+        tooltip: {
+            filename: 'ファイル: {filename}',
+        },
+        actionBar: {
+            complete: '完了済み',
+            incomplete: '未完了',
+        },
         settings: {
             title: 'Postodo 設定',
             language: {

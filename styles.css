@@ -80,6 +80,7 @@
     font-family: 'Kalam', cursive, var(--font-text);
     border: 1px solid rgba(0, 0, 0, 0.1);
     user-select: none;
+    overflow: hidden;
 }
 
 .sticky-note:hover {
@@ -95,12 +96,13 @@
 
 .note-content {
     width: 100%;
-    height: calc(100% - 24px);
+    height: calc(100% - 40px);
     word-wrap: break-word;
     overflow-y: auto;
     line-height: 1.4;
     color: #333;
     font-size: 14px;
+    padding-bottom: 8px;
 }
 
 .note-content::-webkit-scrollbar {
@@ -117,15 +119,13 @@
 }
 
 .note-checkbox {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     cursor: pointer;
     accent-color: var(--interactive-accent);
     opacity: 0;
     transition: opacity 0.2s;
+    margin: 0;
 }
 
 .sticky-note:hover .note-checkbox {
@@ -450,8 +450,8 @@
 /* タスクチェックボックス */
 .task-checkbox {
     position: absolute;
-    bottom: 8px;
-    right: 8px;
+    bottom: 12px;
+    right: 12px;
     width: 18px;
     height: 18px;
     cursor: pointer;
@@ -506,8 +506,8 @@
     .task-checkbox {
         width: 16px;
         height: 16px;
-        bottom: 6px;
-        right: 6px;
+        bottom: 10px;
+        right: 10px;
     }
     
     .task-due-date,
@@ -628,4 +628,67 @@
 
 .theme-dark .note-title:hover {
     background: rgba(255, 255, 255, 0.05);
+}
+
+
+/* 削除ボタン */
+.note-delete-btn {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.sticky-note:hover .note-delete-btn {
+    opacity: 0.6;
+}
+
+.note-delete-btn:hover {
+    opacity: 1 !important;
+    transform: scale(1.1);
+    background: rgba(244, 67, 54, 0.1);
+}
+
+/* 付箋のアクションバー */
+.note-actions {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 0 0 8px 8px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .note-delete-btn {
+        width: 22px;
+        height: 22px;
+        font-size: 12px;
+        opacity: 0.6;
+    }
+    
+    .note-checkbox {
+        width: 16px;
+        height: 16px;
+    }
+    
+    .note-actions {
+        height: 28px;
+        padding: 0 6px;
+    }
 }

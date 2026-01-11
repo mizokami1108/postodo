@@ -1,7 +1,7 @@
-import { ItemView, WorkspaceLeaf } from 'obsidian';
+import { ItemView, WorkspaceLeaf, Menu, Platform } from 'obsidian';
 import { DIContainer } from '../core/container';
 import { DataManager } from '../implementations/data/data-manager';
-import { StickyNote } from '../types/core-types';
+import { StickyNote, NoteColor, NoteSize } from '../types/core-types';
 import { SERVICE_TOKENS } from '../types/core-types';
 import { SimpleDragHandler } from './simple-drag-handler';
 import { FeedbackSystem } from './feedback-system';
@@ -12,6 +12,7 @@ import { PostodoNoteDetector } from '../utils/postodo-note-detector';
 import { DisplayFilter } from '../implementations/ui/display-filter';
 import { DisplayFilterType } from '../interfaces/ui/i-display-filter';
 import { ConfigProvider } from '../providers/config-provider';
+import { getTranslations, Language, Translations } from '../i18n/translations';
 
 export class PostodoView extends ItemView {
     private dataManager: DataManager;
@@ -446,6 +447,10 @@ export class PostodoView extends ItemView {
             }
         });
 
+        // ツールチップにファイル名を設定
+        const filename = note.filePath.split('/').pop() || note.filePath;
+        noteEl.title = this.t('tooltip.filename').replace('{filename}', filename);
+
         // スタイリング
         noteEl.style.position = 'absolute';
         noteEl.style.left = `${note.position.x}px`;
@@ -471,28 +476,7 @@ export class PostodoView extends ItemView {
             this.createTaskHeader(noteEl, note);
         }
 
-        // タイトル（通常のノートの場合のみ）
-        let titleEl: HTMLElement | null = null;
-        if (!isTaskNote) {
-            titleEl = noteEl.createEl('div', {
-                cls: 'note-title',
-                text: note.title || ''
-            });
-            titleEl.style.fontWeight = 'bold';
-            titleEl.style.marginBottom = '4px';
-            titleEl.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
-            titleEl.style.paddingBottom = '4px';
-            titleEl.style.minHeight = '20px';
-            titleEl.style.cursor = 'text';
-            
-            // タイトルが空の場合はプレースホルダーを表示
-            if (!note.title) {
-                titleEl.style.color = 'rgba(0,0,0,0.4)';
-                titleEl.textContent = 'タイトルを入力...';
-            }
-        }
-
-        // コンテンツ
+        // コンテンツ（タイトル欄は削除）
         const contentEl = noteEl.createEl('div', {
             cls: isTaskNote ? 'task-content' : 'note-content'
         });
@@ -512,10 +496,15 @@ export class PostodoView extends ItemView {
             cls: isTaskNote ? 'task-checkbox' : 'note-checkbox'
         });
         checkboxEl.checked = note.completed;
-        checkboxEl.title = note.completed ? '完了済み' : '未完了';
+        const t = this.getTranslations();
+        checkboxEl.title = note.completed ? t.actionBar.complete : t.actionBar.incomplete;
+
+        // アクションバー（チェックボックスのみ - 削除ボタンは右クリックメニューに移動）
+        const actionsEl = noteEl.createEl('div', { cls: 'note-actions' });
+        actionsEl.appendChild(checkboxEl);
 
         // イベントリスナー
-        this.setupNoteEventListeners(noteEl, note, contentEl, checkboxEl, titleEl);
+        this.setupNoteEventListeners(noteEl, note, contentEl, checkboxEl);
     }
 
     private createTaskHeader(noteEl: HTMLElement, note: StickyNote): void {
@@ -566,8 +555,7 @@ export class PostodoView extends ItemView {
         noteEl: HTMLElement,
         note: StickyNote,
         contentEl: HTMLElement,
-        checkboxEl: HTMLInputElement,
-        titleEl: HTMLElement | null = null
+        checkboxEl: HTMLInputElement
     ): void {
         // 既存のドラッグハンドラーをクリーンアップ
         const existingHandler = this.dragHandlers.get(note.id);
@@ -582,24 +570,22 @@ export class PostodoView extends ItemView {
         });
         this.dragHandlers.set(note.id, dragHandler);
 
-        // タイトル編集機能（通常のノートの場合のみ）
-        if (titleEl) {
-            titleEl.addEventListener('dblclick', (e) => {
-                e.stopPropagation();
-                console.log(`[DEBUG] PostodoView: Double-click title edit triggered for note ${note.id}`);
-                const currentNote = this.notes.find(n => n.id === note.id);
-                if (!currentNote) {
-                    console.log(`[DEBUG] PostodoView: Note ${note.id} not found in local notes`);
-                    return;
-                }
-                this.editNoteTitle(currentNote, titleEl);
-            });
-        }
+        // 右クリックコンテキストメニュー
+        noteEl.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const currentNote = this.notes.find(n => n.id === note.id);
+            if (currentNote) {
+                this.showContextMenu(currentNote, e);
+            }
+        });
 
-        // 編集機能
+        // モバイル長押し対応
+        this.setupLongPressHandler(noteEl, note);
+
+        // 編集機能（ダブルクリック）
         contentEl.addEventListener('dblclick', () => {
             console.log(`[DEBUG] PostodoView: Double-click edit triggered for note ${note.id}`);
-            // 現在の付箋状態を取得
             const currentNote = this.notes.find(n => n.id === note.id);
             if (!currentNote) {
                 console.log(`[DEBUG] PostodoView: Note ${note.id} not found in local notes`);
@@ -617,133 +603,250 @@ export class PostodoView extends ItemView {
         });
     }
 
-    private editNoteTitle(note: StickyNote, titleEl: HTMLElement): void {
-        console.log(`[DEBUG] PostodoView: Starting title edit for note ${note.id}, title: "${note.title}"`);
-        // 編集状態を設定
-        this.dataManager.setNoteEditing(note.id, true);
-        
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = note.title || '';
-        input.placeholder = 'タイトルを入力...';
-        input.style.width = '100%';
-        input.style.border = 'none';
-        input.style.background = 'transparent';
-        input.style.fontWeight = 'bold';
-        input.style.outline = '2px solid #4a90d9';
-        input.style.borderRadius = '2px';
-        input.style.padding = '2px';
-        
-        titleEl.replaceWith(input);
-        input.focus();
-        input.select();
-        
-        const saveTitle = async () => {
-            const newTitle = input.value.trim();
-            console.log(`[DEBUG] PostodoView: Saving title for note ${note.id}: "${note.title}" -> "${newTitle}"`);
-            
-            // UI更新を先に実行
-            const newTitleEl = document.createElement('div');
-            newTitleEl.className = 'note-title';
-            newTitleEl.style.fontWeight = 'bold';
-            newTitleEl.style.marginBottom = '4px';
-            newTitleEl.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
-            newTitleEl.style.paddingBottom = '4px';
-            newTitleEl.style.minHeight = '20px';
-            newTitleEl.style.cursor = 'text';
-            
-            if (newTitle) {
-                newTitleEl.textContent = newTitle;
-                newTitleEl.style.color = '';
-            } else {
-                newTitleEl.textContent = 'タイトルを入力...';
-                newTitleEl.style.color = 'rgba(0,0,0,0.4)';
-            }
-            
-            input.replaceWith(newTitleEl);
-            
-            // 新しい要素にイベントリスナーを再設定
-            newTitleEl.addEventListener('dblclick', (e) => {
-                e.stopPropagation();
-                this.editNoteTitle({ ...note, title: newTitle }, newTitleEl);
-            });
-            
-            // ローカル状態を先に更新
-            const noteIndex = this.notes.findIndex(n => n.id === note.id);
-            if (noteIndex !== -1) {
-                this.notes[noteIndex] = { ...this.notes[noteIndex], title: newTitle };
-            }
-            
-            // タイトルが変わった場合のみデータ保存（ファイル名変更を含む）
-            if (newTitle !== note.title) {
-                try {
-                    const result = await this.dataManager.renameNote(note.id, newTitle);
-                    if (result.success) {
-                        this.feedbackSystem?.showSuccess('タイトルを更新しました');
-                        // ローカル状態を更新（ファイルパスも更新される可能性がある）
-                        if (noteIndex !== -1) {
-                            this.notes[noteIndex] = result.data;
-                        }
-                    } else {
-                        this.handleError(result.error, 'renameNote');
-                        // 保存失敗時は元に戻す
-                        newTitleEl.textContent = note.title || 'タイトルを入力...';
-                        if (!note.title) {
-                            newTitleEl.style.color = 'rgba(0,0,0,0.4)';
-                        }
-                        if (noteIndex !== -1) {
-                            this.notes[noteIndex] = { ...this.notes[noteIndex], title: note.title };
-                        }
+    // モバイル長押しハンドラー
+    private setupLongPressHandler(noteEl: HTMLElement, note: StickyNote): void {
+        let longPressTimer: number | null = null;
+        let touchMoved = false;
+
+        noteEl.addEventListener('touchstart', (e) => {
+            touchMoved = false;
+            longPressTimer = window.setTimeout(() => {
+                if (!touchMoved) {
+                    const currentNote = this.notes.find(n => n.id === note.id);
+                    if (currentNote) {
+                        this.showContextMenu(currentNote, e);
                     }
-                } catch (error) {
-                    console.error('Save title error:', error);
-                    this.handleError(error as Error, 'saveTitle');
                 }
+            }, 500);
+        }, { passive: true });
+
+        noteEl.addEventListener('touchmove', () => {
+            touchMoved = true;
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
             }
-            
-            // 最後に編集状態を解除
-            this.dataManager.setNoteEditing(note.id, false);
-        };
-        
-        const cancelTitle = () => {
-            // 編集状態を解除
-            this.dataManager.setNoteEditing(note.id, false);
-            
-            const newTitleEl = document.createElement('div');
-            newTitleEl.className = 'note-title';
-            newTitleEl.style.fontWeight = 'bold';
-            newTitleEl.style.marginBottom = '4px';
-            newTitleEl.style.borderBottom = '1px solid rgba(0,0,0,0.1)';
-            newTitleEl.style.paddingBottom = '4px';
-            newTitleEl.style.minHeight = '20px';
-            newTitleEl.style.cursor = 'text';
-            
-            if (note.title) {
-                newTitleEl.textContent = note.title;
-            } else {
-                newTitleEl.textContent = 'タイトルを入力...';
-                newTitleEl.style.color = 'rgba(0,0,0,0.4)';
+        }, { passive: true });
+
+        noteEl.addEventListener('touchend', () => {
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
             }
-            
-            input.replaceWith(newTitleEl);
-            
-            // 新しい要素にイベントリスナーを再設定
-            newTitleEl.addEventListener('dblclick', (e) => {
-                e.stopPropagation();
-                this.editNoteTitle(note, newTitleEl);
-            });
-        };
-        
-        input.addEventListener('blur', saveTitle);
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                saveTitle();
-            } else if (e.key === 'Escape') {
-                cancelTitle();
-            }
-        });
+        }, { passive: true });
     }
+
+    // コンテキストメニューの表示
+    private showContextMenu(note: StickyNote, event: MouseEvent | TouchEvent): void {
+        const menu = new Menu();
+        const t = this.getTranslations();
+
+        // ノートを開く
+        menu.addItem((item) => {
+            item.setTitle(t.contextMenu.openNote)
+                .setIcon('file-text')
+                .onClick(async () => {
+                    await this.openNoteFile(note);
+                });
+        });
+
+        // 編集
+        menu.addItem((item) => {
+            item.setTitle(t.contextMenu.edit)
+                .setIcon('pencil')
+                .onClick(() => {
+                    const noteEl = this.canvasEl.querySelector(`[data-note-id="${note.id}"]`);
+                    const contentEl = noteEl?.querySelector('.note-content, .task-content') as HTMLElement;
+                    if (contentEl) {
+                        this.editNote(note, contentEl);
+                    }
+                });
+        });
+
+        menu.addSeparator();
+
+        // 色を変更（サブメニュー）
+        menu.addItem((item) => {
+            item.setTitle(t.contextMenu.changeColor)
+                .setIcon('palette');
+            
+            const submenu = (item as any).setSubmenu();
+            const colors: { key: keyof typeof t.contextMenu.colors; value: NoteColor }[] = [
+                { key: 'yellow', value: 'yellow' },
+                { key: 'pink', value: 'pink' },
+                { key: 'blue', value: 'blue' },
+                { key: 'green', value: 'green' },
+                { key: 'orange', value: 'orange' },
+                { key: 'purple', value: 'purple' },
+            ];
+            
+            colors.forEach(({ key, value }) => {
+                submenu.addItem((subItem: any) => {
+                    subItem.setTitle(t.contextMenu.colors[key])
+                        .onClick(async () => {
+                            await this.changeNoteColor(note.id, value);
+                        });
+                });
+            });
+        });
+
+        // サイズ変更（サブメニュー）
+        menu.addItem((item) => {
+            item.setTitle(t.contextMenu.changeSize)
+                .setIcon('maximize');
+            
+            const submenu = (item as any).setSubmenu();
+            const sizes: { key: keyof typeof t.contextMenu.sizes; value: NoteSize }[] = [
+                { key: 'small', value: 'small' },
+                { key: 'medium', value: 'medium' },
+                { key: 'large', value: 'large' },
+            ];
+            
+            sizes.forEach(({ key, value }) => {
+                submenu.addItem((subItem: any) => {
+                    subItem.setTitle(t.contextMenu.sizes[key])
+                        .onClick(async () => {
+                            await this.changeNoteSize(note.id, value);
+                        });
+                });
+            });
+        });
+
+        menu.addSeparator();
+
+        // 完了/未完了
+        menu.addItem((item) => {
+            const title = note.completed ? t.contextMenu.markIncomplete : t.contextMenu.markComplete;
+            item.setTitle(title)
+                .setIcon(note.completed ? 'circle' : 'check-circle')
+                .onClick(async () => {
+                    await this.toggleNoteCompletion(note.id);
+                });
+        });
+
+        menu.addSeparator();
+
+        // ファイル名をコピー
+        menu.addItem((item) => {
+            item.setTitle(t.contextMenu.copyFilename)
+                .setIcon('copy')
+                .onClick(async () => {
+                    await this.copyFilename(note);
+                });
+        });
+
+        // 削除
+        menu.addItem((item) => {
+            item.setTitle(t.contextMenu.delete)
+                .setIcon('trash')
+                .onClick(async () => {
+                    await this.deleteNote(note.id);
+                });
+        });
+
+        // メニューを表示
+        if (event instanceof MouseEvent) {
+            menu.showAtMouseEvent(event);
+        } else {
+            // タッチイベントの場合
+            const touch = event.touches[0] || event.changedTouches[0];
+            menu.showAtPosition({ x: touch.clientX, y: touch.clientY });
+        }
+    }
+
+    // ノートファイルを開く
+    private async openNoteFile(note: StickyNote): Promise<void> {
+        try {
+            const file = this.app.vault.getAbstractFileByPath(note.filePath);
+            if (file) {
+                await this.app.workspace.openLinkText(note.filePath, '', false);
+            } else {
+                this.feedbackSystem?.showError('ファイルが見つかりません');
+            }
+        } catch (error) {
+            console.error('Failed to open note file:', error);
+            this.feedbackSystem?.showError('ファイルを開けませんでした');
+        }
+    }
+
+    // 色を変更
+    private async changeNoteColor(noteId: string, color: NoteColor): Promise<void> {
+        const result = await this.dataManager.updateNote(noteId, {
+            appearance: { color }
+        });
+        
+        if (result.success) {
+            const noteIndex = this.notes.findIndex(n => n.id === noteId);
+            if (noteIndex !== -1) {
+                this.notes[noteIndex] = result.data;
+                this.updateNoteElement(result.data);
+            }
+            this.feedbackSystem?.showSuccess('色を変更しました');
+        } else {
+            this.handleError(result.error, 'changeNoteColor');
+        }
+    }
+
+    // サイズを変更
+    private async changeNoteSize(noteId: string, size: NoteSize): Promise<void> {
+        const sizeMap = {
+            small: { width: 150, height: 150 },
+            medium: { width: 200, height: 180 },
+            large: { width: 250, height: 220 }
+        };
+        
+        const dimensions = sizeMap[size];
+        const result = await this.dataManager.updateNote(noteId, {
+            dimensions,
+            appearance: { size }
+        });
+        
+        if (result.success) {
+            const noteIndex = this.notes.findIndex(n => n.id === noteId);
+            if (noteIndex !== -1) {
+                this.notes[noteIndex] = result.data;
+                this.updateNoteElement(result.data);
+            }
+            this.feedbackSystem?.showSuccess('サイズを変更しました');
+        } else {
+            this.handleError(result.error, 'changeNoteSize');
+        }
+    }
+
+    // ファイル名をコピー
+    private async copyFilename(note: StickyNote): Promise<void> {
+        try {
+            const filename = note.filePath.split('/').pop() || note.filePath;
+            await navigator.clipboard.writeText(filename);
+            this.feedbackSystem?.showSuccess('ファイル名をコピーしました');
+        } catch (error) {
+            console.error('Failed to copy filename:', error);
+            this.feedbackSystem?.showError('コピーに失敗しました');
+        }
+    }
+
+    // 翻訳を取得
+    private getTranslations(): Translations {
+        return getTranslations(this.getLanguage());
+    }
+
+    // 翻訳キーを取得（テンプレート用）
+    private t(key: string): string {
+        const translations = this.getTranslations();
+        const keys = key.split('.');
+        let value: any = translations;
+        for (const k of keys) {
+            value = value?.[k];
+        }
+        return value || key;
+    }
+
+    // 言語を取得
+    private getLanguage(): Language {
+        const locale = window.localStorage.getItem('language') || 'en';
+        return locale.startsWith('ja') ? 'ja' : 'en';
+    }
+
 
     private editNote(note: StickyNote, contentEl: HTMLElement): void {
         console.log(`[DEBUG] PostodoView: Starting edit for note ${note.id}, content: "${note.content}"`);
@@ -754,9 +857,15 @@ export class PostodoView extends ItemView {
         input.value = note.content;
         input.style.width = '100%';
         input.style.height = '100%';
-        input.style.border = 'none';
-        input.style.background = 'transparent';
+        input.style.border = '2px solid #4a90d9';
+        input.style.borderRadius = '4px';
+        input.style.background = 'rgba(255, 255, 255, 0.9)';
+        input.style.color = '#333';
         input.style.resize = 'none';
+        input.style.padding = '4px';
+        input.style.fontSize = '14px';
+        input.style.fontFamily = 'inherit';
+        input.style.outline = 'none';
         
         contentEl.replaceWith(input);
         input.focus();
@@ -851,21 +960,22 @@ export class PostodoView extends ItemView {
         noteEl.style.left = `${note.position.x}px`;
         noteEl.style.top = `${note.position.y}px`;
 
-        const isTaskNote = PostodoNoteDetector.isTaskNote(note);
-        
-        // タイトルの更新（通常のノートの場合のみ）
-        if (!isTaskNote) {
-            const titleEl = noteEl.querySelector('.note-title') as HTMLElement;
-            if (titleEl) {
-                if (note.title) {
-                    titleEl.textContent = note.title;
-                    titleEl.style.color = '';
-                } else {
-                    titleEl.textContent = 'タイトルを入力...';
-                    titleEl.style.color = 'rgba(0,0,0,0.4)';
-                }
-            }
+        // サイズの更新
+        if (note.dimensions) {
+            noteEl.style.width = `${note.dimensions.width}px`;
+            noteEl.style.height = `${note.dimensions.height}px`;
         }
+
+        // 色の更新
+        if (note.appearance?.color) {
+            noteEl.style.backgroundColor = this.getColorValue(note.appearance.color);
+        }
+
+        // ツールチップの更新
+        const filename = note.filePath.split('/').pop() || note.filePath;
+        noteEl.title = this.t('tooltip.filename').replace('{filename}', filename);
+
+        const isTaskNote = PostodoNoteDetector.isTaskNote(note);
         
         // コンテンツの更新
         const contentEl = noteEl.querySelector('.note-content, .task-content') as HTMLElement;
@@ -893,7 +1003,8 @@ export class PostodoView extends ItemView {
         const checkboxEl = noteEl.querySelector('.note-checkbox, .task-checkbox') as HTMLInputElement;
         if (checkboxEl) {
             checkboxEl.checked = note.completed;
-            checkboxEl.title = note.completed ? '完了済み' : '未完了';
+            const t = this.getTranslations();
+            checkboxEl.title = note.completed ? t.actionBar.complete : t.actionBar.incomplete;
         }
 
         // タスクヘッダーの更新（タスクノートの場合）
@@ -947,6 +1058,26 @@ export class PostodoView extends ItemView {
         };
         
         return colorMap[color as keyof typeof colorMap] || colorMap.yellow;
+    }
+
+    private async deleteNote(noteId: string): Promise<void> {
+        const note = this.notes.find(n => n.id === noteId);
+        if (!note) return;
+
+        const result = await this.dataManager.deleteNote(noteId);
+        
+        if (result.success) {
+            // ローカルの状態を更新
+            this.notes = this.notes.filter(n => n.id !== noteId);
+            
+            // UI要素を削除
+            this.removeNoteElement(noteId);
+            
+            // 通知を表示
+            this.feedbackSystem?.showSuccess('付箋を削除しました');
+        } else {
+            this.handleError(result.error, 'deleteNote');
+        }
     }
 
     private handleError(error: Error | undefined, action: string): void {
