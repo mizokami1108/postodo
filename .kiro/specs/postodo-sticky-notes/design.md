@@ -198,7 +198,7 @@ interface ResolveResult {
 }
 ```
 
-### 命名戦略
+### 命名方式
 
 #### NamingStrategy
 

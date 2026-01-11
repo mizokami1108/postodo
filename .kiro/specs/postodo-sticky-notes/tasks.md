@@ -4,7 +4,7 @@
 
 既存の実装を基に、要件定義書で定義された機能を完成させます。主な追加・改善項目は以下の通りです：
 - タイトルと本文の分離
-- ファイル命名戦略（NamingStrategy）
+- ファイル命名方式（NamingStrategy）
 - 表示フィルター（DisplayFilter）
 - 競合解決システムの強化
 - プラグイン設定画面の拡充
@@ -23,7 +23,7 @@
     - **Property 4: タイトル変更時のファイル名同期**
     - **Validates: Requirements 2.5**
 
-- [x] 2. ファイル命名戦略の実装
+- [x] 2. ファイル命名方式の実装
   - [x] 2.1 NamingStrategy インターフェースの作成
     - `src/interfaces/naming/i-naming-strategy.ts` を作成
     - _Requirements: 1.6, 13.4_
@@ -36,7 +36,7 @@
     - 既存ファイルを走査して次の連番を決定
     - _Requirements: 13.5_
   - [x] 2.4 NamingStrategy の DI 登録と DataManager への統合
-    - ConfigProvider から命名戦略を取得
+    - ConfigProvider から命名方式を取得
     - DataManager.buildNote で NamingStrategy を使用
     - _Requirements: 1.6, 13.3_
   - [x] 2.5 プロパティテスト: ファイル命名規則

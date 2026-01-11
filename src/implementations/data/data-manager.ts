@@ -30,29 +30,40 @@ export class DataManager implements IDataManager {
     }
 
     /**
-     * 現在の設定に基づいて命名戦略を作成する
+     * 現在の設定に基づいて命名方式を作成する
      */
     private createNamingStrategy(): INamingStrategy {
         let strategyType: NamingStrategyType = 'timestamp';
+        let customFormat: string | undefined;
         try {
             if (this.configProvider) {
                 strategyType = this.configProvider.get<NamingStrategyType>('namingStrategy') || 'timestamp';
+                customFormat = this.configProvider.get<string>('customNamingFormat');
             }
         } catch (error) {
             console.warn('Failed to get namingStrategy from config, using default:', error);
         }
-        return this.namingStrategyFactory.create(strategyType);
+        console.log(`[DEBUG] DataManager.createNamingStrategy: Creating strategy of type '${strategyType}', customFormat = '${customFormat}'`);
+        
+        // カスタムフォーマットをファクトリーに設定
+        if (customFormat) {
+            this.namingStrategyFactory.setCustomFormat(customFormat);
+        }
+        
+        const strategy = this.namingStrategyFactory.create(strategyType);
+        console.log(`[DEBUG] DataManager.createNamingStrategy: Created strategy:`, strategy.strategyType);
+        return strategy;
     }
 
     /**
-     * 命名戦略を更新する
+     * 命名方式を更新する
      */
     updateNamingStrategy(): void {
         this.currentNamingStrategy = this.createNamingStrategy();
     }
 
     /**
-     * 現在の命名戦略を取得する
+     * 現在の命名方式を取得する
      */
     getNamingStrategy(): INamingStrategy {
         return this.currentNamingStrategy;
@@ -414,10 +425,12 @@ export class DataManager implements IDataManager {
         }
         
         // NamingStrategyを使用してファイル名を生成
+        console.log(`[DEBUG] DataManager.buildNote: Using naming strategy '${this.currentNamingStrategy.strategyType}'`);
         const fileName = await Promise.resolve(this.currentNamingStrategy.generateFileName({
             title: options.title,
             content: options.content
         }));
+        console.log(`[DEBUG] DataManager.buildNote: Generated fileName '${fileName}'`);
         const filePath = `${postodoFolder}/${fileName}.md`;
         
         return {

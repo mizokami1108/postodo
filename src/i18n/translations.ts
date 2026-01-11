@@ -83,9 +83,13 @@ export interface Translations {
                 desc: string;
                 options: {
                     timestamp: string;
-                    sequential: string;
                     custom: string;
                 };
+            };
+            customFormat: {
+                name: string;
+                desc: string;
+                placeholder: string;
             };
         };
         displayFilter: {
@@ -251,10 +255,14 @@ export const translations: Record<Language, Translations> = {
                     name: 'Naming method',
                     desc: 'How new note files are named',
                     options: {
-                        timestamp: 'Timestamp (Sticky-yyyyMMddHHmmss)',
-                        sequential: 'Sequential (Sticky-0001)',
-                        custom: 'Custom',
+                        timestamp: 'Timestamp (Sticky-yyyyMMddHHmmssSSS)',
+                        custom: 'Custom format',
                     },
+                },
+                customFormat: {
+                    name: 'Custom format',
+                    desc: 'Placeholders: {YYYY}, {MM}, {DD}, {HH}, {mm}, {ss}, {SSS}. Random suffix added if {SSS} not included.',
+                    placeholder: 'Sticky-{YYYY}{MM}{DD}-{HH}{mm}{ss}',
                 },
             },
             displayFilter: {
@@ -418,10 +426,14 @@ export const translations: Record<Language, Translations> = {
                     name: '命名方式',
                     desc: '新規付箋ファイルの命名方法を選択します',
                     options: {
-                        timestamp: '日時形式（Sticky-yyyyMMddHHmmss）',
-                        sequential: '連番形式（Sticky-0001）',
-                        custom: 'カスタム',
+                        timestamp: '日時形式（Sticky-yyyyMMddHHmmssSSS）',
+                        custom: 'カスタムフォーマット',
                     },
+                },
+                customFormat: {
+                    name: 'カスタムフォーマット',
+                    desc: 'プレースホルダー: {YYYY}, {MM}, {DD}, {HH}, {mm}, {ss}, {SSS}。{SSS}がない場合はランダム文字列が自動追加されます。',
+                    placeholder: 'Sticky-{YYYY}{MM}{DD}-{HH}{mm}{ss}',
                 },
             },
             displayFilter: {

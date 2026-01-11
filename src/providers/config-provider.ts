@@ -156,6 +156,7 @@ export class ConfigProvider {
             'rendering.maxRenderedNotes',
             'postodoFolder',
             'namingStrategy',
+            'customNamingFormat',
             'defaultDisplayFilter'
         ];
         

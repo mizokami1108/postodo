@@ -11,6 +11,7 @@ import { PostodoSettings, DEFAULT_SETTINGS } from '../types/config-types';
 import { SERVICE_TOKENS } from '../types/core-types';
 import { IStorageAdapter } from '../interfaces/storage/i-storage-adapter';
 import { ErrorHandler } from '../utils/error-handler';
+import { NamingStrategyFactory } from '../implementations/naming/naming-strategy-factory';
 
 export class PostodoPlugin {
     private container!: DIContainer;
@@ -99,9 +100,15 @@ export class PostodoPlugin {
             return new NoteRepository(storageAdapter, eventBus, this.app.vault, configProvider);
         });
 
-        this.container.register(SERVICE_TOKENS.DATA_MANAGER, DataManager, {
-            dependencies: [SERVICE_TOKENS.NOTE_REPOSITORY, SERVICE_TOKENS.EVENT_BUS, SERVICE_TOKENS.CONFIG],
-            singleton: true
+        // NamingStrategyFactoryの作成（カスタムフォーマットを設定）
+        const customNamingFormat = this.settings.customNamingFormat || 'Sticky-{YYYY}{MM}{DD}-{HH}{mm}{ss}';
+        const namingStrategyFactory = new NamingStrategyFactory(customNamingFormat);
+
+        this.container.registerFactory(SERVICE_TOKENS.DATA_MANAGER, () => {
+            const noteRepository = this.container.resolve<NoteRepository>(SERVICE_TOKENS.NOTE_REPOSITORY);
+            const eventBus = this.container.resolve<IEventBus>(SERVICE_TOKENS.EVENT_BUS);
+            const configProvider = this.container.resolve<ConfigProvider>(SERVICE_TOKENS.CONFIG);
+            return new DataManager(noteRepository, eventBus, configProvider, namingStrategyFactory);
         });
     }
 

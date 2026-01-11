@@ -1,42 +1,40 @@
 import { INamingStrategy, NamingStrategyType } from '../../interfaces/naming/i-naming-strategy';
 import { TimestampNamingStrategy } from './timestamp-naming-strategy';
-import { SequentialNamingStrategy, IFileScanner } from './sequential-naming-strategy';
+import { CustomNamingStrategy } from './custom-naming-strategy';
 
 /**
- * 命名戦略のファクトリークラス
- * 設定に基づいて適切な命名戦略を生成する
+ * 命名方式のファクトリークラス
+ * 設定に基づいて適切な命名方式を生成する
  */
 export class NamingStrategyFactory {
-    private fileScanner?: IFileScanner;
+    private customFormat?: string;
 
     /**
-     * @param fileScanner 連番戦略で使用するファイルスキャナー
+     * @param customFormat カスタム命名フォーマット
      */
-    constructor(fileScanner?: IFileScanner) {
-        this.fileScanner = fileScanner;
+    constructor(customFormat?: string) {
+        this.customFormat = customFormat;
     }
 
     /**
-     * ファイルスキャナーを設定する
+     * カスタムフォーマットを設定する
      */
-    setFileScanner(fileScanner: IFileScanner): void {
-        this.fileScanner = fileScanner;
+    setCustomFormat(format: string): void {
+        this.customFormat = format;
     }
 
     /**
-     * 指定された種類の命名戦略を生成する
-     * @param strategyType 命名戦略の種類
-     * @returns 命名戦略のインスタンス
+     * 指定された種類の命名方式を生成する
+     * @param strategyType 命名方式の種類
+     * @returns 命名方式のインスタンス
      */
     create(strategyType: NamingStrategyType): INamingStrategy {
+        console.log(`[DEBUG] NamingStrategyFactory.create: Creating strategy '${strategyType}', customFormat = '${this.customFormat}'`);
         switch (strategyType) {
             case 'timestamp':
                 return new TimestampNamingStrategy();
-            case 'sequential':
-                return new SequentialNamingStrategy(this.fileScanner);
             case 'custom':
-                // カスタム戦略はデフォルトでタイムスタンプを使用
-                return new TimestampNamingStrategy();
+                return new CustomNamingStrategy(this.customFormat);
             default:
                 return new TimestampNamingStrategy();
         }

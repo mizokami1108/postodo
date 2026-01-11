@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import * as fc from 'fast-check';
 import { TimestampNamingStrategy } from './timestamp-naming-strategy';
-import { SequentialNamingStrategy, IFileScanner } from './sequential-naming-strategy';
+import { CustomNamingStrategy } from './custom-naming-strategy';
 import { NamingStrategyFactory } from './naming-strategy-factory';
 import { StickyNote, NoteColor, NoteSize } from '../../types/core-types';
 
@@ -52,15 +52,15 @@ describe('NamingStrategy - Property Tests', () => {
 
         /**
          * Property 3: ファイル命名規則の適用
-         * タイムスタンプ戦略は Sticky-yyyyMMddHHmmss 形式のファイル名を生成する
+         * タイムスタンプ戦略は Sticky-yyyyMMddHHmmssSSS 形式のファイル名を生成する（ミリ秒を含む）
          */
-        it('should generate file names in Sticky-yyyyMMddHHmmss format for any note', () => {
+        it('should generate file names in Sticky-yyyyMMddHHmmssSSS format for any note', () => {
             fc.assert(
                 fc.property(stickyNoteArb, (note) => {
                     const fileName = strategy.generateFileName(note);
                     
-                    // Sticky-yyyyMMddHHmmss 形式であることを確認
-                    expect(fileName).toMatch(/^Sticky-\d{14}$/);
+                    // Sticky-yyyyMMddHHmmssSSS 形式であることを確認（17桁）
+                    expect(fileName).toMatch(/^Sticky-\d{17}$/);
                     
                     // パースできることを確認
                     const parsed = strategy.parseFileName(fileName);
@@ -99,7 +99,7 @@ describe('NamingStrategy - Property Tests', () => {
         it('should return null for invalid file names', () => {
             fc.assert(
                 fc.property(
-                    fc.string().filter(s => !s.match(/^Sticky-\d{14}$/)),
+                    fc.string().filter(s => !s.match(/^Sticky-\d{14}$/) && !s.match(/^Sticky-\d{17}$/)),
                     (invalidFileName) => {
                         const parsed = strategy.parseFileName(invalidFileName);
                         expect(parsed).toBeNull();
@@ -110,48 +110,69 @@ describe('NamingStrategy - Property Tests', () => {
         });
     });
 
-    describe('SequentialNamingStrategy', () => {
+    describe('CustomNamingStrategy', () => {
         /**
          * Property 3: ファイル命名規則の適用
-         * 連番戦略は Sticky-{seqNo} 形式のファイル名を生成する
+         * カスタム戦略は指定されたフォーマットに基づいてファイル名を生成する
+         * ミリ秒が含まれない場合はランダムサフィックスが追加される
          */
-        it('should generate file names in Sticky-{seqNo} format for any note', async () => {
-            await fc.assert(
-                fc.asyncProperty(stickyNoteArb, async (note) => {
-                    const strategy = new SequentialNamingStrategy();
-                    const fileName = await strategy.generateFileName(note);
+        it('should generate file names based on custom format for any note', () => {
+            fc.assert(
+                fc.property(stickyNoteArb, (note) => {
+                    const strategy = new CustomNamingStrategy('Note-{YYYY}-{MM}-{DD}');
+                    const fileName = strategy.generateFileName(note);
                     
-                    // Sticky-{seqNo} 形式であることを確認（4桁ゼロパディング）
-                    expect(fileName).toMatch(/^Sticky-\d{4}$/);
-                    
-                    // パースできることを確認
-                    const parsed = strategy.parseFileName(fileName);
-                    expect(parsed).not.toBeNull();
-                    expect(parsed?.seqNo).toBe(1); // スキャナーなしの場合は1から開始
+                    // Note-YYYY-MM-DD-xxxx 形式であることを確認（ランダムサフィックス付き）
+                    expect(fileName).toMatch(/^Note-\d{4}-\d{2}-\d{2}-[a-z0-9]{4}$/);
                 }),
                 { numRuns: 100 }
             );
         });
 
         /**
-         * 連番のパーステスト
+         * ミリ秒を含むフォーマットではランダムサフィックスが追加されない
          */
-        it('should parse sequential file names correctly', () => {
-            const strategy = new SequentialNamingStrategy();
+        it('should not add random suffix when format includes {SSS}', () => {
+            const strategy = new CustomNamingStrategy('Note-{YYYY}{MM}{DD}{SSS}');
+            const fileName = strategy.generateFileName({});
             
-            fc.assert(
-                fc.property(
-                    fc.integer({ min: 0, max: 9999 }),
-                    (seqNo) => {
-                        const fileName = `Sticky-${seqNo.toString().padStart(4, '0')}`;
-                        const parsed = strategy.parseFileName(fileName);
-                        
-                        expect(parsed).not.toBeNull();
-                        expect(parsed?.seqNo).toBe(seqNo);
-                    }
-                ),
-                { numRuns: 100 }
-            );
+            // Note-YYYYMMDD + 3桁ミリ秒 = 11桁の数字部分
+            expect(fileName).toMatch(/^Note-\d{11}$/);
+        });
+
+        /**
+         * 全てのプレースホルダーが正しく置換されることを確認
+         * ミリ秒を含むのでランダムサフィックスは追加されない
+         */
+        it('should replace all placeholders correctly', () => {
+            const strategy = new CustomNamingStrategy('{YYYY}{MM}{DD}{HH}{mm}{ss}{SSS}');
+            const fileName = strategy.generateFileName({});
+            
+            // 全て数字に置換されていることを確認（17桁）
+            expect(fileName).toMatch(/^\d{17}$/);
+        });
+
+        /**
+         * フォーマット変更のテスト
+         */
+        it('should allow format to be changed', () => {
+            const strategy = new CustomNamingStrategy('Old-{YYYY}{SSS}');
+            expect(strategy.generateFileName({})).toMatch(/^Old-\d{7}$/);
+            
+            strategy.setFormat('New-{MM}-{DD}{SSS}');
+            expect(strategy.generateFileName({})).toMatch(/^New-\d{2}-\d{5}$/);
+        });
+
+        /**
+         * パーステスト - タイムスタンプを含むファイル名
+         */
+        it('should parse file names with timestamp patterns', () => {
+            const strategy = new CustomNamingStrategy();
+            
+            // 有効なタイムスタンプパターン
+            const parsed = strategy.parseFileName('Note-2026-01-11-16-45-30');
+            expect(parsed).not.toBeNull();
+            expect(parsed?.timestamp).toBeInstanceOf(Date);
         });
     });
 
@@ -166,170 +187,64 @@ describe('NamingStrategy - Property Tests', () => {
             const timestampStrategy = factory.create('timestamp');
             expect(timestampStrategy.strategyType).toBe('timestamp');
             
-            const sequentialStrategy = factory.create('sequential');
-            expect(sequentialStrategy.strategyType).toBe('sequential');
-            
             const customStrategy = factory.create('custom');
-            expect(customStrategy.strategyType).toBe('timestamp'); // カスタムはデフォルトでタイムスタンプ
+            expect(customStrategy.strategyType).toBe('custom');
+        });
+
+        /**
+         * カスタムフォーマットが正しく適用されることを確認
+         * ミリ秒を含まないフォーマットにはランダムサフィックスが追加される
+         */
+        it('should apply custom format when creating custom strategy', () => {
+            const factory = new NamingStrategyFactory('MyNote-{YYYY}{MM}{DD}');
+            
+            const strategy = factory.create('custom');
+            const fileName = strategy.generateFileName({});
+            
+            // ランダムサフィックス付き: MyNote-YYYYMMDD-xxxx
+            expect(fileName).toMatch(/^MyNote-\d{8}-[a-z0-9]{4}$/);
+        });
+
+        /**
+         * setCustomFormatでフォーマットを変更できることを確認
+         * ミリ秒を含まないフォーマットにはランダムサフィックスが追加される
+         */
+        it('should allow custom format to be changed via setCustomFormat', () => {
+            const factory = new NamingStrategyFactory();
+            
+            factory.setCustomFormat('Changed-{YYYY}');
+            const strategy = factory.create('custom');
+            const fileName = strategy.generateFileName({});
+            
+            // ランダムサフィックス付き: Changed-YYYY-xxxx
+            expect(fileName).toMatch(/^Changed-\d{4}-[a-z0-9]{4}$/);
         });
 
         /**
          * 生成された戦略が正しいファイル名形式を生成することを確認
          */
-        it('should generate correct file name format based on strategy type', async () => {
+        it('should generate correct file name format based on strategy type', () => {
             const factory = new NamingStrategyFactory();
             
-            await fc.assert(
-                fc.asyncProperty(
+            fc.assert(
+                fc.property(
                     stickyNoteArb,
-                    fc.constantFrom('timestamp', 'sequential') as fc.Arbitrary<'timestamp' | 'sequential'>,
-                    async (note, strategyType) => {
+                    fc.constantFrom('timestamp', 'custom') as fc.Arbitrary<'timestamp' | 'custom'>,
+                    (note, strategyType) => {
                         const strategy = factory.create(strategyType);
-                        const fileName = await Promise.resolve(strategy.generateFileName(note));
+                        const fileName = strategy.generateFileName(note);
                         
                         if (strategyType === 'timestamp') {
-                            expect(fileName).toMatch(/^Sticky-\d{14}$/);
+                            // 17桁（ミリ秒を含む）
+                            expect(fileName).toMatch(/^Sticky-\d{17}$/);
                         } else {
-                            expect(fileName).toMatch(/^Sticky-\d{4}$/);
+                            // デフォルトのカスタムフォーマット（秒まで含むのでランダムサフィックス付き）
+                            expect(fileName).toMatch(/^Sticky-\d{8}-\d{6}-[a-z0-9]{4}$/);
                         }
                     }
                 ),
                 { numRuns: 100 }
             );
         });
-    });
-});
-
-
-/**
- * Feature: postodo-sticky-notes
- * Property 19: 連番の一意性保証
- * Validates: Requirements 13.5
- * 
- * *任意の* 連番形式での付箋作成に対して、既存のファイルと重複しない連番が生成される
- */
-describe('SequentialNamingStrategy - Uniqueness Property Tests', () => {
-    /**
-     * モックファイルスキャナー
-     * テスト用に既存ファイル名のリストを返す
-     */
-    class MockFileScanner implements IFileScanner {
-        constructor(private fileNames: string[]) {}
-        
-        getExistingFileNames(): string[] {
-            return this.fileNames;
-        }
-    }
-
-    /**
-     * Property 19: 連番の一意性保証
-     * 任意の既存ファイルリストに対して、生成される連番は既存のものと重複しない
-     */
-    it('should generate unique sequence number that does not conflict with existing files', async () => {
-        await fc.assert(
-            fc.asyncProperty(
-                // 既存の連番リスト（0-9999の範囲で重複なし）
-                fc.uniqueArray(fc.integer({ min: 1, max: 9999 }), { minLength: 0, maxLength: 100 }),
-                async (existingSeqNos) => {
-                    // 既存ファイル名のリストを生成
-                    const existingFileNames = existingSeqNos.map(
-                        seqNo => `Sticky-${seqNo.toString().padStart(4, '0')}`
-                    );
-                    
-                    const scanner = new MockFileScanner(existingFileNames);
-                    const strategy = new SequentialNamingStrategy(scanner);
-                    
-                    // 新しいファイル名を生成
-                    const newFileName = await strategy.generateFileName({});
-                    
-                    // 生成されたファイル名が既存のものと重複しないことを確認
-                    expect(existingFileNames).not.toContain(newFileName);
-                    
-                    // 生成された連番が既存の最大値+1であることを確認
-                    const parsed = strategy.parseFileName(newFileName);
-                    expect(parsed).not.toBeNull();
-                    
-                    const maxExisting = existingSeqNos.length > 0 ? Math.max(...existingSeqNos) : 0;
-                    expect(parsed?.seqNo).toBe(maxExisting + 1);
-                }
-            ),
-            { numRuns: 100 }
-        );
-    });
-
-    /**
-     * 連続生成時の一意性テスト
-     * 複数回連続で生成しても重複しない
-     */
-    it('should generate unique sequence numbers when called multiple times', async () => {
-        await fc.assert(
-            fc.asyncProperty(
-                fc.integer({ min: 1, max: 10 }), // 生成回数
-                async (generateCount) => {
-                    const existingFileNames: string[] = [];
-                    const scanner = new MockFileScanner(existingFileNames);
-                    const strategy = new SequentialNamingStrategy(scanner);
-                    
-                    const generatedFileNames: string[] = [];
-                    
-                    for (let i = 0; i < generateCount; i++) {
-                        const fileName = await strategy.generateFileName({});
-                        generatedFileNames.push(fileName);
-                        // 生成したファイル名を既存リストに追加（実際の使用をシミュレート）
-                        existingFileNames.push(fileName);
-                    }
-                    
-                    // 全ての生成されたファイル名が一意であることを確認
-                    const uniqueFileNames = new Set(generatedFileNames);
-                    expect(uniqueFileNames.size).toBe(generateCount);
-                }
-            ),
-            { numRuns: 100 }
-        );
-    });
-
-    /**
-     * 空のフォルダからの開始テスト
-     * 既存ファイルがない場合は1から開始
-     */
-    it('should start from 1 when no existing files', async () => {
-        const scanner = new MockFileScanner([]);
-        const strategy = new SequentialNamingStrategy(scanner);
-        
-        const fileName = await strategy.generateFileName({});
-        
-        expect(fileName).toBe('Sticky-0001');
-        
-        const parsed = strategy.parseFileName(fileName);
-        expect(parsed?.seqNo).toBe(1);
-    });
-
-    /**
-     * 非連番ファイルが混在する場合のテスト
-     * 連番形式でないファイルは無視される
-     */
-    it('should ignore non-sequential file names when calculating next sequence', async () => {
-        await fc.assert(
-            fc.asyncProperty(
-                fc.uniqueArray(fc.integer({ min: 1, max: 100 }), { minLength: 1, maxLength: 20 }),
-                fc.array(fc.string({ minLength: 1, maxLength: 20 }).filter(s => !s.match(/^Sticky-\d+$/)), { minLength: 0, maxLength: 10 }),
-                async (seqNos, nonSeqFileNames) => {
-                    // 連番ファイルと非連番ファイルを混在させる
-                    const seqFileNames = seqNos.map(n => `Sticky-${n.toString().padStart(4, '0')}`);
-                    const allFileNames = [...seqFileNames, ...nonSeqFileNames];
-                    
-                    const scanner = new MockFileScanner(allFileNames);
-                    const strategy = new SequentialNamingStrategy(scanner);
-                    
-                    const newFileName = await strategy.generateFileName({});
-                    const parsed = strategy.parseFileName(newFileName);
-                    
-                    // 連番ファイルの最大値+1であることを確認
-                    const maxSeqNo = Math.max(...seqNos);
-                    expect(parsed?.seqNo).toBe(maxSeqNo + 1);
-                }
-            ),
-            { numRuns: 100 }
-        );
     });
 });

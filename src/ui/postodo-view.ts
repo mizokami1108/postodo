@@ -275,7 +275,7 @@ export class PostodoView extends ItemView {
             }
         });
 
-        // 命名戦略設定変更の監視
+        // 命名方式設定変更の監視
         eventBus.on('naming-strategy-changed', (event: any) => {
             if (event?.strategy) {
                 this.handleNamingStrategyChange(event.strategy);
@@ -1257,7 +1257,7 @@ export class PostodoView extends ItemView {
     }
 
     private handleNamingStrategyChange(strategy: string): void {
-        // 命名戦略の変更に応じた処理
+        // 命名方式の変更に応じた処理
         console.log(`[DEBUG] PostodoView: Naming strategy changed to ${strategy}`);
         
         // 通知を表示
@@ -1266,9 +1266,9 @@ export class PostodoView extends ItemView {
             'sequential': '連番形式',
             'custom': 'カスタム形式'
         };
-        this.feedbackSystem?.showInfo(`命名戦略が「${strategyLabels[strategy] || strategy}」に変更されました`);
+        this.feedbackSystem?.showInfo(`命名方式が「${strategyLabels[strategy] || strategy}」に変更されました`);
         
-        // 命名戦略の変更は新規作成時に適用されるため、既存の付箋には影響しない
+        // 命名方式の変更は新規作成時に適用されるため、既存の付箋には影響しない
     }
 
     private adjustCanvasHeight(): void {

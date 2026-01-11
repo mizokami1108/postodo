@@ -111,19 +111,34 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         const settings = this.postodoPlugin.getSettings();
 
-        // 命名戦略の選択
+        // 命名方式の選択
         new Setting(containerEl)
             .setName(this.t.settings.naming.strategy.name)
             .setDesc(this.t.settings.naming.strategy.desc)
             .addDropdown(dropdown => dropdown
                 .addOption('timestamp', this.t.settings.naming.strategy.options.timestamp)
-                .addOption('sequential', this.t.settings.naming.strategy.options.sequential)
                 .addOption('custom', this.t.settings.naming.strategy.options.custom)
                 .setValue(settings.namingStrategy)
                 .onChange(async (value) => {
                     settings.namingStrategy = value as NamingStrategyType;
                     await this.postodoPlugin.saveSettings();
+                    // 設定画面を再描画してカスタムフォーマット欄の表示/非表示を切り替え
+                    this.display();
                 }));
+
+        // カスタムフォーマット入力欄（カスタム選択時のみ表示）
+        if (settings.namingStrategy === 'custom') {
+            new Setting(containerEl)
+                .setName(this.t.settings.naming.customFormat.name)
+                .setDesc(this.t.settings.naming.customFormat.desc)
+                .addText(text => text
+                    .setPlaceholder(this.t.settings.naming.customFormat.placeholder)
+                    .setValue(settings.customNamingFormat || 'Sticky-{YYYY}{MM}{DD}-{HH}{mm}{ss}')
+                    .onChange(async (value) => {
+                        settings.customNamingFormat = value;
+                        await this.postodoPlugin.saveSettings();
+                    }));
+        }
     }
 
     private createDisplayFilterSettings(containerEl: HTMLElement): void {

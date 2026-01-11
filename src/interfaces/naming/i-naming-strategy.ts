@@ -20,7 +20,7 @@ export interface INamingStrategy {
     parseFileName(fileName: string): ParsedFileName | null;
 
     /**
-     * 命名戦略の種類を取得する
+     * 命名方式の種類を取得する
      */
     readonly strategyType: NamingStrategyType;
 }
@@ -38,6 +38,6 @@ export interface ParsedFileName {
 }
 
 /**
- * 命名戦略の種類
+ * 命名方式の種類
  */
-export type NamingStrategyType = 'timestamp' | 'sequential' | 'custom';
+export type NamingStrategyType = 'timestamp' | 'custom';

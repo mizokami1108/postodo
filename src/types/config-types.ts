@@ -44,8 +44,10 @@ export interface PostodoSettings extends PostodoConfig {
     // Obsidianネイティブ設定
     postodoFolder: string;
     canvasFileName: string;
-    // 命名戦略設定
+    // 命名方式設定
     namingStrategy: NamingStrategyType;
+    // カスタム命名フォーマット
+    customNamingFormat: string;
     // 表示フィルター設定
     defaultDisplayFilter: DisplayFilterType;
     // 言語設定
@@ -59,7 +61,7 @@ export type AnimationEngine = 'css' | 'web-animations' | 'custom';
 export type StorageAdapter = 'obsidian-vault' | 'memory' | 'custom';
 export type SyncStrategy = 'real-time' | 'manual' | 'periodic';
 export type ConflictResolution = 'auto-merge' | 'user-choice' | 'last-write-wins';
-export type NamingStrategyType = 'timestamp' | 'sequential' | 'custom';
+export type NamingStrategyType = 'timestamp' | 'custom';
 export type DisplayFilterType = 'incomplete' | 'complete' | 'all';
 export type NoteColorType = 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple';
 export type NoteSizeType = 'small' | 'medium' | 'large';
@@ -81,6 +83,7 @@ export const DEFAULT_SETTINGS: PostodoSettings = {
     postodoFolder: 'Postodo',
     canvasFileName: 'postodo-canvas.md',
     namingStrategy: 'timestamp',
+    customNamingFormat: 'Sticky-{YYYY}{MM}{DD}-{HH}{mm}{ss}',
     defaultDisplayFilter: 'incomplete',
     language: 'ja',
     core: {
