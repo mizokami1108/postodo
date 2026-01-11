@@ -309,13 +309,31 @@ export class PostodoView extends ItemView {
             return;
         }
 
+        // 設定からデフォルト値を取得
+        const configProvider = this.container.resolve<ConfigProvider>(SERVICE_TOKENS.CONFIG);
+        const defaultColor = configProvider.get<string>('noteDefaults.color') || 'yellow';
+        const defaultSize = configProvider.get<string>('noteDefaults.size') || 'medium';
+        
+        // サイズに応じた寸法を取得
+        const sizeMap = {
+            small: { width: 150, height: 150 },
+            medium: { width: 200, height: 180 },
+            large: { width: 250, height: 220 }
+        };
+        const dimensions = sizeMap[defaultSize as keyof typeof sizeMap] || sizeMap.medium;
+
         const result = await this.dataManager.createNote({
             content,
             position: {
-                x: Math.random() * (this.canvasEl.offsetWidth - 200),
-                y: Math.random() * (this.canvasEl.offsetHeight - 180),
+                x: Math.random() * (this.canvasEl.offsetWidth - dimensions.width),
+                y: Math.random() * (this.canvasEl.offsetHeight - dimensions.height),
                 zIndex: 1
-            }
+            },
+            appearance: {
+                color: defaultColor as any,
+                size: defaultSize as any
+            },
+            dimensions
         });
 
         if (result.success) {
@@ -333,9 +351,27 @@ export class PostodoView extends ItemView {
     }
 
     private async createNoteAtPosition(x: number, y: number): Promise<void> {
+        // 設定からデフォルト値を取得
+        const configProvider = this.container.resolve<ConfigProvider>(SERVICE_TOKENS.CONFIG);
+        const defaultColor = configProvider.get<string>('noteDefaults.color') || 'yellow';
+        const defaultSize = configProvider.get<string>('noteDefaults.size') || 'medium';
+        
+        // サイズに応じた寸法を取得
+        const sizeMap = {
+            small: { width: 150, height: 150 },
+            medium: { width: 200, height: 180 },
+            large: { width: 250, height: 220 }
+        };
+        const dimensions = sizeMap[defaultSize as keyof typeof sizeMap] || sizeMap.medium;
+
         const result = await this.dataManager.createNote({
             content: 'New note',
-            position: { x, y, zIndex: 1 }
+            position: { x, y, zIndex: 1 },
+            appearance: {
+                color: defaultColor as any,
+                size: defaultSize as any
+            },
+            dimensions
         });
 
         if (result.success) {

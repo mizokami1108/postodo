@@ -38,6 +38,22 @@ export interface Translations {
         complete: string;
         incomplete: string;
     };
+    // Common (shared between context menu and settings)
+    common: {
+        colors: {
+            yellow: string;
+            pink: string;
+            blue: string;
+            green: string;
+            orange: string;
+            purple: string;
+        };
+        sizes: {
+            small: string;
+            medium: string;
+            large: string;
+        };
+    };
     // Settings Tab
     settings: {
         title: string;
@@ -127,6 +143,17 @@ export interface Translations {
                 desc: string;
             };
         };
+        noteDefaults: {
+            title: string;
+            color: {
+                name: string;
+                desc: string;
+            };
+            size: {
+                name: string;
+                desc: string;
+            };
+        };
         advanced: {
             title: string;
             debugMode: {
@@ -181,6 +208,21 @@ export const translations: Record<Language, Translations> = {
         actionBar: {
             complete: 'Completed',
             incomplete: 'Incomplete',
+        },
+        common: {
+            colors: {
+                yellow: 'Yellow',
+                pink: 'Pink',
+                blue: 'Blue',
+                green: 'Green',
+                orange: 'Orange',
+                purple: 'Purple',
+            },
+            sizes: {
+                small: 'Small',
+                medium: 'Medium',
+                large: 'Large',
+            },
         },
         settings: {
             title: 'Postodo Settings',
@@ -270,6 +312,17 @@ export const translations: Record<Language, Translations> = {
                     desc: 'Align notes to grid when dragging',
                 },
             },
+            noteDefaults: {
+                title: 'Note Defaults',
+                color: {
+                    name: 'Default color',
+                    desc: 'Color applied to new notes',
+                },
+                size: {
+                    name: 'Default size',
+                    desc: 'Size applied to new notes',
+                },
+            },
             advanced: {
                 title: 'Advanced Settings',
                 debugMode: {
@@ -322,6 +375,21 @@ export const translations: Record<Language, Translations> = {
         actionBar: {
             complete: '完了済み',
             incomplete: '未完了',
+        },
+        common: {
+            colors: {
+                yellow: '黄色',
+                pink: 'ピンク',
+                blue: '青',
+                green: '緑',
+                orange: 'オレンジ',
+                purple: '紫',
+            },
+            sizes: {
+                small: '小',
+                medium: '中',
+                large: '大',
+            },
         },
         settings: {
             title: 'Postodo 設定',
@@ -409,6 +477,17 @@ export const translations: Record<Language, Translations> = {
                 snapToGrid: {
                     name: 'グリッドに吸着',
                     desc: '付箋をドラッグ時にグリッドに合わせて配置します',
+                },
+            },
+            noteDefaults: {
+                title: '付箋のデフォルト',
+                color: {
+                    name: 'デフォルトの色',
+                    desc: '新規付箋に適用される色',
+                },
+                size: {
+                    name: 'デフォルトのサイズ',
+                    desc: '新規付箋に適用されるサイズ',
                 },
             },
             advanced: {

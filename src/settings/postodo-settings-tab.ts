@@ -1,6 +1,6 @@
 import { App, PluginSettingTab, Setting, Modal, Plugin } from 'obsidian';
 import { PostodoPlugin } from '../core/plugin';
-import { PostodoSettings, NamingStrategyType, DisplayFilterType, LanguageType } from '../types/config-types';
+import { PostodoSettings, NamingStrategyType, DisplayFilterType, LanguageType, NoteColorType, NoteSizeType } from '../types/config-types';
 import { getTranslations, Translations, Language } from '../i18n/translations';
 
 export class PostodoSettingsTab extends PluginSettingTab {
@@ -22,28 +22,27 @@ export class PostodoSettingsTab extends PluginSettingTab {
 
         containerEl.createEl('h2', { text: this.t.settings.title });
 
-        // 言語設定セクション（最上部に配置）
+        // 1. 言語設定（最上部）
         this.createLanguageSettings(containerEl);
         
-        // 基本設定セクション
-        this.createBasicSettings(containerEl);
+        // 2. 付箋のデフォルト（色・サイズ）
+        this.createNoteDefaultsSettings(containerEl);
         
-        // 命名戦略設定セクション
-        this.createNamingSettings(containerEl);
-        
-        // 表示フィルター設定セクション
+        // 3. 表示フィルター
         this.createDisplayFilterSettings(containerEl);
         
-        // レンダリング設定セクション  
-        this.createRenderingSettings(containerEl);
+        // 4. 基本設定（フォルダ、自動保存）
+        this.createBasicSettings(containerEl);
         
-        // ストレージ設定セクション
-        this.createStorageSettings(containerEl);
+        // 5. 命名規則
+        this.createNamingSettings(containerEl);
         
-        // UI設定セクション
+        // 6. 外観（グリッド）
         this.createUISettings(containerEl);
         
-        // 高度な設定セクション
+        // 7. 詳細設定（描画、同期、デバッグ等）
+        this.createRenderingSettings(containerEl);
+        this.createStorageSettings(containerEl);
         this.createAdvancedSettings(containerEl);
     }
 
@@ -235,6 +234,49 @@ export class PostodoSettingsTab extends PluginSettingTab {
                 .setValue(settings.ui.snapToGrid)
                 .onChange(async (value) => {
                     settings.ui.snapToGrid = value;
+                    await this.postodoPlugin.saveSettings();
+                }));
+    }
+
+    private createNoteDefaultsSettings(containerEl: HTMLElement): void {
+        containerEl.createEl('h3', { text: this.t.settings.noteDefaults.title });
+
+        const settings = this.postodoPlugin.getSettings();
+
+        // デフォルトの色
+        new Setting(containerEl)
+            .setName(this.t.settings.noteDefaults.color.name)
+            .setDesc(this.t.settings.noteDefaults.color.desc)
+            .addDropdown(dropdown => dropdown
+                .addOption('yellow', this.t.common.colors.yellow)
+                .addOption('pink', this.t.common.colors.pink)
+                .addOption('blue', this.t.common.colors.blue)
+                .addOption('green', this.t.common.colors.green)
+                .addOption('orange', this.t.common.colors.orange)
+                .addOption('purple', this.t.common.colors.purple)
+                .setValue(settings.noteDefaults?.color || 'yellow')
+                .onChange(async (value) => {
+                    if (!settings.noteDefaults) {
+                        settings.noteDefaults = { color: 'yellow', size: 'medium' };
+                    }
+                    settings.noteDefaults.color = value as NoteColorType;
+                    await this.postodoPlugin.saveSettings();
+                }));
+
+        // デフォルトのサイズ
+        new Setting(containerEl)
+            .setName(this.t.settings.noteDefaults.size.name)
+            .setDesc(this.t.settings.noteDefaults.size.desc)
+            .addDropdown(dropdown => dropdown
+                .addOption('small', this.t.common.sizes.small)
+                .addOption('medium', this.t.common.sizes.medium)
+                .addOption('large', this.t.common.sizes.large)
+                .setValue(settings.noteDefaults?.size || 'medium')
+                .onChange(async (value) => {
+                    if (!settings.noteDefaults) {
+                        settings.noteDefaults = { color: 'yellow', size: 'medium' };
+                    }
+                    settings.noteDefaults.size = value as NoteSizeType;
                     await this.postodoPlugin.saveSettings();
                 }));
     }

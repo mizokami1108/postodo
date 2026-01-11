@@ -34,6 +34,10 @@ export interface PostodoConfig {
         autoload: boolean;
         allowExperimental: boolean;
     };
+    noteDefaults: {
+        color: NoteColorType;
+        size: NoteSizeType;
+    };
 }
 
 export interface PostodoSettings extends PostodoConfig {
@@ -57,6 +61,8 @@ export type SyncStrategy = 'real-time' | 'manual' | 'periodic';
 export type ConflictResolution = 'auto-merge' | 'user-choice' | 'last-write-wins';
 export type NamingStrategyType = 'timestamp' | 'sequential' | 'custom';
 export type DisplayFilterType = 'incomplete' | 'complete' | 'all';
+export type NoteColorType = 'yellow' | 'pink' | 'blue' | 'green' | 'orange' | 'purple';
+export type NoteSizeType = 'small' | 'medium' | 'large';
 
 export type DeepPartial<T> = {
     [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
@@ -110,5 +116,9 @@ export const DEFAULT_SETTINGS: PostodoSettings = {
         enabled: [],
         autoload: true,
         allowExperimental: false
+    },
+    noteDefaults: {
+        color: 'yellow',
+        size: 'medium'
     }
 };
